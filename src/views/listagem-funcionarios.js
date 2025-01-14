@@ -8,25 +8,25 @@ import '../custom.css';
 
 import { useNavigate } from 'react-router-dom';
 
-import { IconButton } from '@mui/material';
 import Stack from '@mui/material/Stack';
+import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
 import axios from 'axios';
 import { BASE_URL } from '../config/axios';
 
-const baseURL = `${BASE_URL}/lotes`;
+const baseURL = `${BASE_URL}/funcionarios`;
 
-function ListagemLotes() {
+function ListagemFuncionarios() {
   const navigate = useNavigate();
 
   const cadastrar = () => {
-    navigate(`/cadastro-lotes`);
+    navigate('/cadastro-funcionarios');
   };
 
   const editar = (id) => {
-    navigate(`/cadastro-lotes/${id}`);
+    navigate(`/cadastro-funcionarios/${id}`);
   };
 
   const [dados, setDados] = React.useState([]);
@@ -37,14 +37,16 @@ function ListagemLotes() {
       .delete(url, {
         headers: { 'Content-Type': 'application/json' },
       })
-      .then(() => {
-        mensagemSucesso(`Lote excluído com sucesso!`);
+      .then(function (response) {
+        mensagemSucesso('Funcionário excluído com sucesso!');
         setDados(
-          dados.filter((dado) => dado.id !== id)
+          dados.filter((dado) => {
+            return dado.id !== id;
+          })
         );
       })
-      .catch(() => {
-        mensagemErro(`Erro ao excluir o lote`);
+      .catch(function (error) {
+        mensagemErro('Erro ao excluir o funcionário.');
       });
   }
 
@@ -54,40 +56,44 @@ function ListagemLotes() {
     });
   }, []);
 
-  if (!dados.length) return <p>Carregando lotes...</p>;
+  if (!dados) return null;
 
   return (
     <div className='container'>
-      <Card title='Listagem de Lotes'>
+      <Card title='Listagem de Funcionários'>
         <div className='row'>
           <div className='col-lg-12'>
             <div className='bs-component'>
               <button
                 type='button'
-                className='btn btn-warning'
+                className='btn btn-success'
                 onClick={cadastrar}
               >
-                Novo Lote
+                Novo Funcionário
               </button>
               <table className='table table-hover'>
                 <thead>
                   <tr>
-                    <th scope='col'>ID</th>
-                    <th scope='col'>Quantidade em Estoque</th>
-                    <th scope='col'>Fornecedor</th>
-                    <th scope='col'>Data de Fabricação</th>
-                    <th scope='col'>Data de Validade</th>
+                    <th scope='col'>Nome Completo</th>
+                    <th scope='col'>Setor</th>
+                    <th scope='col'>Tipo</th>
+                    <th scope='col'>Gênero</th>
+                    <th scope='col'>CPF</th>
+                    <th scope='col'>Data de Nascimento</th>
+                    <th scope='col'>Estado Civil</th>
                     <th scope='col'>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {dados.map((dado) => (
                     <tr key={dado.id}>
-                      <td>{dado.id}</td>
-                      <td>{dado.quantidadeEstoque}</td>
-                      <td>{dado.fornecedor}</td>
-                      <td>{new Date(dado.dataFabricacao).toLocaleDateString()}</td>
-                      <td>{new Date(dado.dataValidade).toLocaleDateString()}</td>
+                      <td>{dado.nomeCompleto}</td>
+                      <td>{dado.setor}</td>
+                      <td>{dado.tipoFuncionario}</td>
+                      <td>{dado.genero}</td>
+                      <td>{dado.cpf}</td>
+                      <td>{new Date(dado.dataNascimento).toLocaleDateString()}</td>
+                      <td>{dado.estadoCivil}</td>
                       <td>
                         <Stack spacing={1} padding={0} direction='row'>
                           <IconButton
@@ -116,4 +122,4 @@ function ListagemLotes() {
   );
 }
 
-export default ListagemLotes;
+export default ListagemFuncionarios;

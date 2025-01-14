@@ -1,35 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import Stack from '@mui/material/Stack';
+import { IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 import Card from '../components/card';
-
 import { mensagemSucesso, mensagemErro } from '../components/toastr';
 
 import '../custom.css';
 
-import { useNavigate } from 'react-router-dom';
-
-import { IconButton } from '@mui/material';
-import Stack from '@mui/material/Stack';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-
 import axios from 'axios';
-import { BASE_URL } from '../config/axios';
+import { BASE_URL2 } from '../config/axios';
 
-const baseURL = `${BASE_URL}/lotes`;
+const baseURL = `${BASE_URL2}/pacientes`;
 
-function ListagemLotes() {
+function ListagemPacientes() {
   const navigate = useNavigate();
 
   const cadastrar = () => {
-    navigate(`/cadastro-lotes`);
+    navigate(`/cadastro-pacientes`);
   };
 
   const editar = (id) => {
-    navigate(`/cadastro-lotes/${id}`);
+    navigate(`/cadastro-pacientes/${id}`);
   };
 
-  const [dados, setDados] = React.useState([]);
+  const [dados, setDados] = useState([]);
 
   async function excluir(id) {
     let url = `${baseURL}/${id}`;
@@ -37,57 +35,53 @@ function ListagemLotes() {
       .delete(url, {
         headers: { 'Content-Type': 'application/json' },
       })
-      .then(() => {
-        mensagemSucesso(`Lote excluído com sucesso!`);
-        setDados(
-          dados.filter((dado) => dado.id !== id)
-        );
+      .then((response) => {
+        mensagemSucesso(`Paciente excluído com sucesso!`);
+        setDados(dados.filter((dado) => dado.id !== id));
       })
-      .catch(() => {
-        mensagemErro(`Erro ao excluir o lote`);
+      .catch((error) => {
+        mensagemErro(`Erro ao excluir o paciente`);
       });
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     axios.get(baseURL).then((response) => {
       setDados(response.data);
     });
   }, []);
 
-  if (!dados.length) return <p>Carregando lotes...</p>;
+  if (!dados) return null;
 
   return (
     <div className='container'>
-      <Card title='Listagem de Lotes'>
+      <Card title='Listagem de Pacientes'>
         <div className='row'>
           <div className='col-lg-12'>
             <div className='bs-component'>
               <button
                 type='button'
-                className='btn btn-warning'
-                onClick={cadastrar}
+                className='btn btn-success'
+                onClick={() => cadastrar()}
               >
-                Novo Lote
+                Novo Paciente
               </button>
               <table className='table table-hover'>
                 <thead>
                   <tr>
-                    <th scope='col'>ID</th>
-                    <th scope='col'>Quantidade em Estoque</th>
-                    <th scope='col'>Fornecedor</th>
-                    <th scope='col'>Data de Fabricação</th>
-                    <th scope='col'>Data de Validade</th>
+                    <th scope='col'>Nome Completo</th>
+                    <th scope='col'>Gênero</th>
+                    <th scope='col'>Data de Nascimento</th>
+                    <th scope='col'>CPF</th>
                     <th scope='col'>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {dados.map((dado) => (
                     <tr key={dado.id}>
-                      <td>{dado.id}</td>
-                      <td>{dado.quantidadeEstoque}</td>
-                      <td>{dado.fornecedor}</td>
-                      <td>{new Date(dado.dataFabricacao).toLocaleDateString()}</td>
-                      <td>{new Date(dado.dataValidade).toLocaleDateString()}</td>
+                      <td>{dado.nomeCompleto}</td>
+                      <td>{dado.genero}</td>
+                      <td>{dado.dataNascimento}</td>
+                      <td>{dado.cpf}</td>
                       <td>
                         <Stack spacing={1} padding={0} direction='row'>
                           <IconButton
@@ -116,4 +110,4 @@ function ListagemLotes() {
   );
 }
 
-export default ListagemLotes;
+export default ListagemPacientes;

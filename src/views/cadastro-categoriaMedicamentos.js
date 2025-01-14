@@ -19,42 +19,43 @@ function CadastroCategoriaMedicamentos() {
   const { idParam } = useParams();
   const navigate = useNavigate();
 
-  const baseURL = `${BASE_URL}/categorias`;
+  const baseURL = `${BASE_URL}/categoriaMedicamentos`;
 
   const [id, setId] = useState('');
   const [nomeCategoria, setNomeCategoria] = useState('');
   const [descricao, setDescricao] = useState('');
   const [categorias, setCategorias] = useState([]);
 
-  // Buscar categorias cadastradas para o dropdown
+  // Carregar categorias existentes
   useEffect(() => {
     async function carregarCategorias() {
-      await axios
-        .get(baseURL)
-        .then((response) => {
-          setCategorias(response.data);
-        })
-        .catch(() => {
-          mensagemErro('Erro ao carregar categorias');
-        });
+      try {
+        const response = await axios.get(baseURL);
+        setCategorias(response.data);
+      } catch (error) {
+        mensagemErro('Erro ao carregar categorias');
+      }
     }
     carregarCategorias();
   }, []);
 
-  // Inicializar dados para edição
+  // Buscar dados para edição
   useEffect(() => {
     if (idParam) {
-      axios.get(`${baseURL}/${idParam}`).then((response) => {
-        const dados = response.data;
-        setId(dados.id);
-        setNomeCategoria(dados.nomeCategoria);
-        setDescricao(dados.descricao);
-      });
+      axios
+        .get(`${baseURL}/${idParam}`)
+        .then((response) => {
+          const dados = response.data;
+          setId(dados.id);
+          setNomeCategoria(dados.nomeCategoria);
+          setDescricao(dados.descricao);
+        })
+        .catch(() => mensagemErro('Erro ao buscar dados da categoria'));
     }
   }, [idParam]);
 
   async function salvar() {
-    let data = {
+    const data = {
       id,
       nomeCategoria,
       descricao,
@@ -62,42 +63,37 @@ function CadastroCategoriaMedicamentos() {
 
     const headers = { 'Content-Type': 'application/json' };
 
-    if (idParam) {
-      // Atualizar categoria
-      await axios
-        .put(`${baseURL}/${idParam}`, JSON.stringify(data), { headers })
-        .then(() => {
-          mensagemSucesso('Categoria atualizada com sucesso!');
-          navigate(`/listagem-categorias`);
-        })
-        .catch(() => mensagemErro('Erro ao atualizar categoria'));
-    } else {
-      // Criar nova categoria
-      await axios
-        .post(baseURL, JSON.stringify(data), { headers })
-        .then(() => {
-          mensagemSucesso('Categoria cadastrada com sucesso!');
-          navigate(`/listagem-categorias`);
-        })
-        .catch(() => mensagemErro('Erro ao cadastrar categoria'));
+    try {
+      if (idParam) {
+        await axios.put(`${baseURL}/${idParam}`, JSON.stringify(data), {
+          headers,
+        });
+        mensagemSucesso('Categoria atualizada com sucesso!');
+      } else {
+        await axios.post(baseURL, JSON.stringify(data), { headers });
+        mensagemSucesso('Categoria cadastrada com sucesso!');
+      }
+      navigate('/listagem-categorias');
+    } catch (error) {
+      mensagemErro('Erro ao salvar categoria');
     }
   }
 
   return (
-    <div className='container'>
-      <Card title='Cadastro de Categoria de Medicamentos'>
-        <div className='row'>
-          <div className='col-lg-12'>
-            <div className='bs-component'>
-              <FormGroup label='Categoria Existente:' htmlFor='selectCategoria'>
+    <div className="container">
+      <Card title="Cadastro de Categoria de Medicamentos">
+        <div className="row">
+          <div className="col-lg-12">
+            <div className="bs-component">
+              <FormGroup label="Categoria Existente:" htmlFor="selectCategoria">
                 <Select
-                  id='selectCategoria'
+                  id="selectCategoria"
                   value={id}
-                  className='form-control'
+                  className="form-control"
                   displayEmpty
                   onChange={(e) => setId(e.target.value)}
                 >
-                  <MenuItem value=''>Selecione uma categoria</MenuItem>
+                  <MenuItem value="">Selecione uma categoria</MenuItem>
                   {categorias.map((categoria) => (
                     <MenuItem key={categoria.id} value={categoria.id}>
                       {categoria.nomeCategoria}
@@ -105,38 +101,41 @@ function CadastroCategoriaMedicamentos() {
                   ))}
                 </Select>
               </FormGroup>
-              <FormGroup label='Nome da Categoria:' htmlFor='inputNomeCategoria'>
+              <FormGroup
+                label="Nome da Categoria:"
+                htmlFor="inputNomeCategoria"
+              >
                 <input
-                  type='text'
-                  id='inputNomeCategoria'
+                  type="text"
+                  id="inputNomeCategoria"
                   value={nomeCategoria}
-                  className='form-control'
-                  placeholder='Ex: Analgésicos'
+                  className="form-control"
+                  placeholder="Ex: Analgésicos"
                   onChange={(e) => setNomeCategoria(e.target.value)}
                 />
               </FormGroup>
-              <FormGroup label='Descrição:' htmlFor='inputDescricao'>
+              <FormGroup label="Descrição:" htmlFor="inputDescricao">
                 <textarea
-                  id='inputDescricao'
+                  id="inputDescricao"
                   value={descricao}
-                  className='form-control'
-                  rows='3'
-                  placeholder='Descreva a categoria'
+                  className="form-control"
+                  rows="3"
+                  placeholder="Descreva a categoria"
                   onChange={(e) => setDescricao(e.target.value)}
                 />
               </FormGroup>
-              <Stack spacing={1} padding={1} direction='row'>
+              <Stack spacing={1} padding={1} direction="row">
                 <button
                   onClick={salvar}
-                  type='button'
-                  className='btn btn-success'
+                  type="button"
+                  className="btn btn-success"
                 >
                   Salvar
                 </button>
                 <button
-                  onClick={() => navigate(`/listagem-categorias`)}
-                  type='button'
-                  className='btn btn-danger'
+                  onClick={() => navigate('/listagem-categorias')}
+                  type="button"
+                  className="btn btn-danger"
                 >
                   Cancelar
                 </button>

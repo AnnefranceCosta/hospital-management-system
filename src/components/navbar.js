@@ -8,8 +8,8 @@ function Navbar(props) {
     <div className='navbar navbar-expand-lg fixed-top navbar-dark bg-primary'>
       <div className='container'>
         <a href='/' className='navbar-brand'>
-          Sgh-App
-        </a>
+          SGH
+        </a> 
         <button
           className='navbar-toggler'
           type='button'
@@ -21,6 +21,41 @@ function Navbar(props) {
         >
           <span className='navbar-toggler-icon'></span>
         </button>
+        <ul className='navbar-nav'>
+            <NavbarItem
+              render='true'
+              href='/listagem-funcionarios'
+              label='Funcionários'
+            />
+          </ul>
+          <ul className='navbar-nav'>
+            <NavbarItem
+              render='true'
+              href='/listagem-tiposFuncionarios'
+              label='Tipos de Funcionarios'
+            />
+          </ul>
+        <ul className='navbar-nav'>
+            <NavbarItem
+              render='true'
+              href='/listagem-pacientes'
+              label='Pacientes'
+            />
+          </ul>
+          <ul className='navbar-nav'>
+            <NavbarItem
+              render='true'
+              href='/listagem-responsavelLegal'
+              label='Responsável Legal'
+            />
+          </ul>
+          <ul className='navbar-nav'>
+            <NavbarItem
+              render='true'
+              href='/listagem-prontuarios'
+              label='Prontuários'
+            />
+          </ul>
         <div className='collapse navbar-collapse' id='navbarResponsive'>
           <ul className='navbar-nav'>
             <NavbarItem
@@ -41,6 +76,13 @@ function Navbar(props) {
               render='true'
               href='/listagem-categoriaMedicamentos'
               label='Categoria de Medicamentos'
+            />
+          </ul>
+          <ul className='navbar-nav'>
+            <NavbarItem
+              render='true'
+              href='/listagem-agendamentos'
+              label='Agendamentos'
             />
           </ul>
           <ul className='navbar-nav'>
