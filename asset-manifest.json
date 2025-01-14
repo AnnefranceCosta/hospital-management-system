@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/shg-app/static/css/main.1394e8f0.css",
+    "main.js": "/shg-app/static/js/main.0a3c000d.js",
+    "index.html": "/shg-app/index.html",
+    "main.1394e8f0.css.map": "/shg-app/static/css/main.1394e8f0.css.map",
+    "main.0a3c000d.js.map": "/shg-app/static/js/main.0a3c000d.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1394e8f0.css",
+    "static/js/main.0a3c000d.js"
+  ]
+}
