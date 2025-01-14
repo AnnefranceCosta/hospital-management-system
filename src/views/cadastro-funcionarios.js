@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+<<<<<<< HEAD
 import Stack from "@mui/material/Stack";
 import Card from "../components/card";
 import FormGroup from "../components/form-group";
@@ -12,6 +13,26 @@ import "../custom.css";
 function CadastroFuncionario() {
   const { idParam } = useParams();
   const navigate = useNavigate();
+=======
+
+import Stack from "@mui/material/Stack";
+
+import Card from "../components/card";
+import FormGroup from "../components/form-group";
+import SubCard from "../components/sub-card";
+
+import { mensagemSucesso, mensagemErro } from "../components/toastr";
+
+import "../custom.css";
+
+import axios from "axios";
+import { BASE_URL } from "../config/axios";
+
+function CadastroFuncionarios() {
+  const { idParam } = useParams();
+  const navigate = useNavigate();
+
+>>>>>>> cfe5ef7a63be80941d0248afcbfdddcbc42b9ce8
   const baseURL = `${BASE_URL}/funcionarios`;
 
   const [dadosTipoFuncionarios, setDadosTipoFuncionarios] = useState([]);
@@ -253,4 +274,8 @@ function CadastroFuncionario() {
   );
 }
 
+<<<<<<< HEAD
 export default CadastroFuncionario;
+=======
+export default CadastroFuncionarios;
+>>>>>>> cfe5ef7a63be80941d0248afcbfdddcbc42b9ce8

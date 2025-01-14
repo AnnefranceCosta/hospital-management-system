@@ -1,6 +1,10 @@
 import React from 'react';
 
 import Card from '../components/card';
+<<<<<<< HEAD
+=======
+
+>>>>>>> cfe5ef7a63be80941d0248afcbfdddcbc42b9ce8
 import { mensagemSucesso, mensagemErro } from '../components/toastr';
 
 import '../custom.css';
@@ -36,16 +40,30 @@ function ListagemFuncionarios() {
       .delete(url, {
         headers: { 'Content-Type': 'application/json' },
       })
+<<<<<<< HEAD
       .then(() => {
         mensagemSucesso(`Funcionário excluído com sucesso!`);
         setDados(dados.filter((dado) => dado.id !== id));
       })
       .catch(() => {
         mensagemErro(`Erro ao excluir funcionário`);
+=======
+      .then(function (response) {
+        mensagemSucesso('Funcionário excluído com sucesso!');
+        setDados(
+          dados.filter((dado) => {
+            return dado.id !== id;
+          })
+        );
+      })
+      .catch(function (error) {
+        mensagemErro('Erro ao excluir o funcionário.');
+>>>>>>> cfe5ef7a63be80941d0248afcbfdddcbc42b9ce8
       });
   }
 
   React.useEffect(() => {
+<<<<<<< HEAD
     axios
       .get(baseURL)
       .then((response) => {
@@ -57,6 +75,14 @@ function ListagemFuncionarios() {
   }, []);
 
   if (!dados.length) return <p>Carregando funcionários...</p>;
+=======
+    axios.get(baseURL).then((response) => {
+      setDados(response.data);
+    });
+  }, []);
+
+  if (!dados) return null;
+>>>>>>> cfe5ef7a63be80941d0248afcbfdddcbc42b9ce8
 
   return (
     <div className='container'>
