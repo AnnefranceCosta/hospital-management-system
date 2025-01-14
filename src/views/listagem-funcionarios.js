@@ -21,7 +21,7 @@ function ListagemFuncionarios() {
   const navigate = useNavigate();
 
   const cadastrar = () => {
-    navigate(`/cadastro-funcionarios`);
+    navigate('/cadastro-funcionarios');
   };
 
   const editar = (id) => {
@@ -37,14 +37,14 @@ function ListagemFuncionarios() {
         headers: { 'Content-Type': 'application/json' },
       })
       .then(() => {
-        mensagemSucesso(`Funcionario excluído com sucesso!`);
+        mensagemSucesso(`Funcionário excluído com sucesso!`);
         setDados(dados.filter((dado) => dado.id !== id));
       })
       .catch(() => {
-        mensagemErro(`Erro ao excluir funcionario`);
+        mensagemErro(`Erro ao excluir funcionário`);
       });
   }
-  
+
   React.useEffect(() => {
     axios
       .get(baseURL)
@@ -52,57 +52,48 @@ function ListagemFuncionarios() {
         setDados(response.data);
       })
       .catch(() => {
-        mensagemErro('Erro ao carregar informações do funcionario');
+        mensagemErro('Erro ao carregar informações do funcionário');
       });
   }, []);
 
-  if (!dados.length) return <p>Carregando funcionarios...</p>;
+  if (!dados.length) return <p>Carregando funcionários...</p>;
 
   return (
     <div className='container'>
-      <Card title='Listagem de Funcionarios'>
+      <Card title='Listagem de Funcionários'>
         <div className='row'>
           <div className='col-lg-12'>
             <div className='bs-component'>
               <button
                 type='button'
-                className='btn btn-warning'
+                className='btn btn-success'
                 onClick={cadastrar}
               >
-                Cadastrar novo funcionario
+                Novo Funcionário
               </button>
               <table className='table table-hover'>
                 <thead>
                   <tr>
-                    <th scope='col'>ID</th>
-                    <th scope='col'>Nome do funcionario</th>
+                    <th scope='col'>Nome Completo</th>
+                    <th scope='col'>Setor</th>
+                    <th scope='col'>Tipo</th>
+                    <th scope='col'>Gênero</th>
                     <th scope='col'>CPF</th>
                     <th scope='col'>Data de Nascimento</th>
-                    <th scope='col'>E-mail</th>
-                    <th scope='col'>Logradouro</th>
-                    <th scope='col'>Numero</th>
-                    <th scope='col'>Complemento</th>
-                    <th scope='col'>Bairro</th>
-                    <th scope='col'>Cidade</th>
-                    <th scope='col'>Estado</th>
-                    <th scope='col'>CEP</th>
+                    <th scope='col'>Estado Civil</th>
+                    <th scope='col'>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
                   {dados.map((dado) => (
                     <tr key={dado.id}>
-                      <td>{dado.id}</td>
-                      <td>{dado.nomeFuncionario}</td>
+                      <td>{dado.nomeCompleto}</td>
+                      <td>{dado.setor}</td>
+                      <td>{dado.tipoFuncionario}</td>
+                      <td>{dado.genero}</td>
                       <td>{dado.cpf}</td>
-                      <td>{dado.dataNascimento}</td>
-                      <td>{dado.email}</td>
-                      <td>{dado.logradouro}</td>
-                      <td>{dado.numero}</td>
-                      <td>{dado.complemento}</td>
-                      <td>{dado.bairro}</td>
-                      <td>{dado.cidade}</td>
-                      <td>{dado.estado}</td>
-                      <td>{dado.cep}</td>
+                      <td>{new Date(dado.dataNascimento).toLocaleDateString()}</td>
+                      <td>{dado.estadoCivil}</td>
                       <td>
                         <Stack spacing={1} padding={0} direction='row'>
                           <IconButton

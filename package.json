@@ -2,11 +2,13 @@
   "name": "sgh-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://jvves.github.io/shg-app",
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^6.1.10",
+    "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
     "bootswatch": "^5.3.3",
     "cra-template": "1.2.0",
@@ -40,5 +42,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }

@@ -1,60 +1,92 @@
-import React from 'react';
-import 'bootswatch/dist/flatly/bootstrap.css';
+import React from "react";
+import "bootswatch/dist/flatly/bootstrap.css";
 
-import NavbarItem from './navbarItem';
+import NavbarItem from "./navbarItem";
 
 function Navbar(props) {
   return (
-    <div className='navbar navbar-expand-lg fixed-top navbar-dark bg-primary'>
-      <div className='container'>
-        <a href='/' className='navbar-brand'>
-          Sgh-App
+    <div className="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
+      <div className="container">
+        <a href="/" className="navbar-brand">
+          SGH
         </a>
         <button
-          className='navbar-toggler'
-          type='button'
-          data-toggle='collapse'
-          data-target='#navbarResponsive'
-          aria-controls='navbarResponsive'
-          aria-expanded='false'
-          aria-label='Toggle navigation'
+          className="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarResponsive"
+          aria-controls="navbarResponsive"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
-          <span className='navbar-toggler-icon'></span>
+          <span className="navbar-toggler-icon"></span>
         </button>
-        <div className='collapse navbar-collapse' id='navbarResponsive'>
-          <ul className='navbar-nav'>
+        <ul className="navbar-nav">
+          <NavbarItem
+            render="true"
+            href="/listagem-funcionarios"
+            label="Funcionários"
+          />
+        </ul>
+        <ul className="navbar-nav">
+          <NavbarItem
+            render="true"
+            href="/listagem-tiposFuncionarios"
+            label="Tipos de Funcionarios"
+          />
+        </ul>
+        <ul className="navbar-nav">
+          <NavbarItem
+            render="true"
+            href="/listagem-pacientes"
+            label="Pacientes"
+          />
+        </ul>
+        <ul className="navbar-nav">
+          <NavbarItem
+            render="true"
+            href="/listagem-responsavelLegal"
+            label="Responsável Legal"
+          />
+        </ul>
+        <ul className="navbar-nav">
+          <NavbarItem
+            render="true"
+            href="/listagem-prontuarios"
+            label="Prontuários"
+          />
+        </ul>
+        <div className="collapse navbar-collapse" id="navbarResponsive">
+          <ul className="navbar-nav">
             <NavbarItem
-              render='true'
-              href='/listagem-medicamentos'
-              label='Medicamentos'
+              render="true"
+              href="/listagem-medicamentos"
+              label="Medicamentos"
             />
           </ul>
-          <ul className='navbar-nav'>
+          <ul className="navbar-nav">
+            <NavbarItem render="true" href="/listagem-lotes" label="Lotes" />
+          </ul>
+          <ul className="navbar-nav">
             <NavbarItem
-              render='true'
-              href='/listagem-lotes'
-              label='Lotes'
+              render="true"
+              href="/listagem-categoriaMedicamentos"
+              label="Categoria de Medicamentos"
             />
           </ul>
-          <ul className='navbar-nav'>
+          <ul className="navbar-nav">
             <NavbarItem
-              render='true'
-              href='/listagem-categoriaMedicamentos'
-              label='Categoria de Medicamentos'
+              render="true"
+              href="/listagem-funcionarios"
+              label="Funcionarios"
             />
+            <NavbarItem href="/listagem-agendamentos" label="Agendamentos" />
           </ul>
-          <ul className='navbar-nav'>
-            <NavbarItem
-              render='true'
-              href='/listagem-funcionarios'
-              label='Funcionarios'
-            />
+          <ul className="navbar-nav">
+            <NavbarItem render="true" href="/login" label="Entrar" />
           </ul>
-          <ul className='navbar-nav'>
-            <NavbarItem render='true' href='/login' label='Entrar' />
-          </ul>
-          <ul className='navbar-nav'>
-            <NavbarItem render='true' href='/' label='Sair' />
+          <ul className="navbar-nav">
+            <NavbarItem render="true" href="/" label="Sair" />
           </ul>
         </div>
       </div>

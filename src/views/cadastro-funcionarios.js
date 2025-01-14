@@ -1,234 +1,247 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
-import Stack from '@mui/material/Stack';
-
-import Card from '../components/card';
-import FormGroup from '../components/form-group';
-
-import { mensagemSucesso, mensagemErro } from '../components/toastr';
-
-import '../custom.css';
-
-import axios from 'axios';
-import { BASE_URL } from '../config/axios';
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Stack from "@mui/material/Stack";
+import Card from "../components/card";
+import FormGroup from "../components/form-group";
+import SubCard from "../components/sub-card";
+import { mensagemSucesso, mensagemErro } from "../components/toastr";
+import axios from "axios";
+import { BASE_URL } from "../config/axios";
+import "../custom.css";
 
 function CadastroFuncionario() {
   const { idParam } = useParams();
   const navigate = useNavigate();
-
   const baseURL = `${BASE_URL}/funcionarios`;
 
-  // Estados para os campos do formulário
-  const [id, setId] = useState('');
-  const [nomeFuncionario, setNomeFuncionario] = useState('');
-  const [cpf, setCpf] = useState(0);
-  const [dataNascimento, setDataNascimento] = useState('');
-  const [email, setEmail] = useState('');
-  const [logradouro, setLogradouro] = useState('');
-  const [numero, setNumero] = useState('');
-  const [complemento, setComplemento] = useState('');
-  const [bairro, setBairro] = useState('');
-  const[cidade, setCidade] = useState('');
-  const[estado, setEstado] = useState('');
-  const[cep, setCep] = useState('');
+  const [dadosTipoFuncionarios, setDadosTipoFuncionarios] = useState([]);
+  const [id, setId] = useState("");
+  const [nomeCompleto, setNomeCompleto] = useState("");
+  const [setor, setSetor] = useState("");
+  const [tipoFuncionario, setTipoFuncionario] = useState(0);
+  const [genero, setGenero] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
+  const [estadoCivil, setEstadoCivil] = useState("");
+  const [telefoneCelular, setTelefoneCelular] = useState("");
+  const [telefoneFixo, setTelefoneFixo] = useState("");
+  const [email, setEmail] = useState("");
+  const [dados, setDados] = useState({});
 
-  function inicializar() {
-    if (idParam == null) {
-      setId('');
-      setNomeFuncionario('');
-      setCpf('');
-      setDataNascimento('');
-      setEmail('');
-      setLogradouro('');
-      setNumero('');
-      setComplemento('');
-      setBairro('');
-      setCidade('');
-      setEstado('');
-      setCep('');
-
-    }
-  }
-
-  async function salvar() {
-    const data = JSON.stringify({
-      id,
-      nomeFuncionario,
-      cpf,
-      dataNascimento,
-      email,
-      logradouro,
-      numero,
-      complemento,
-      bairro,
-      cidade,
-      estado,
-      cep
-    });
-
-    if (idParam == null) {
-      await axios
-        .post(baseURL, data, { headers: { 'Content-Type': 'application/json' } })
-        .then(() => {
-          mensagemSucesso(`Funcionario ${nomeFuncionario} cadastrado com sucesso!`);
-          navigate(`/listagem-funcionarios`);
-        })
-        .catch((error) => {
-          mensagemErro(error.response.data);
-        });
+  const inicializar = useCallback(() => {
+    if (!idParam) {
+      setId("");
+      setNomeCompleto("");
+      setSetor("");
+      setTipoFuncionario(0);
+      setGenero("");
+      setCpf("");
+      setDataNascimento("");
+      setEstadoCivil("");
+      setTelefoneCelular("");
+      setTelefoneFixo("");
+      setEmail("");
     } else {
-      await axios
-        .put(`${baseURL}/${idParam}`, data, { headers: { 'Content-Type': 'application/json' } })
-        .then(() => {
-          mensagemSucesso(`Funcionario ${nomeFuncionario} alterado com sucesso!`);
-          navigate(`/listagem-funcionarios`);
-        })
-        .catch((error) => {
-          mensagemErro(error.response.data);
-        });
-    }
-  }
-
-  async function buscar() {
-    await axios.get(`${baseURL}/${idParam}`).then((response) => {
-      const dados = response.data;
       setId(dados.id);
-      setNomeFuncionario(dados.nomeFuncionario);
+      setNomeCompleto(dados.nomeCompleto);
+      setSetor(dados.setor);
+      setTipoFuncionario(dados.tipoFuncionario);
+      setGenero(dados.genero);
       setCpf(dados.cpf);
       setDataNascimento(dados.dataNascimento);
-      setEmail(dados.email);
-      setLogradouro(dados.logradouro);
-      setNumero(dados.numero);
-      setComplemento(dados.complemento);
-      setBairro(dados.bairro);
-      setCidade(dados.cidade);
-      setEstado(dados.estado);
-      setCep(dados.cep);
-    });
-  }
+      setEstadoCivil(dados.estadoCivil);
+    }
+  }, [dados, idParam]);
+
+  const salvar = async () => {
+    const data = {
+      id,
+      nomeCompleto,
+      setor,
+      tipoFuncionario,
+      genero,
+      cpf,
+      dataNascimento,
+      estadoCivil,
+      telefoneCelular,
+      telefoneFixo,
+      email,
+    };
+
+    try {
+      if (!idParam) {
+        await axios.post(baseURL, data, {
+          headers: { "Content-Type": "application/json" },
+        });
+        mensagemSucesso(`Funcionário ${nomeCompleto} cadastrado com sucesso!`);
+      } else {
+        await axios.put(`${baseURL}/${idParam}`, data, {
+          headers: { "Content-Type": "application/json" },
+        });
+        mensagemSucesso(`Funcionário ${nomeCompleto} alterado com sucesso!`);
+      }
+      navigate("/listagem-funcionarios");
+    } catch (error) {
+      mensagemErro(error.response?.data || "Erro ao salvar funcionário.");
+    }
+  };
+
+  const buscar = useCallback(async () => {
+    try {
+      const response = await axios.get(`${baseURL}/${idParam}`);
+      setDados(response.data);
+    } catch (error) {
+      mensagemErro("Erro ao buscar dados do funcionário.");
+    }
+  }, [baseURL, idParam]);
+
+  useEffect(() => {
+    const fetchTiposFuncionarios = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/tiposFuncionarios`);
+        setDadosTipoFuncionarios(response.data);
+      } catch (error) {
+        mensagemErro("Erro ao carregar os tipos de funcionários.");
+      }
+    };
+    fetchTiposFuncionarios();
+  }, []);
+
+  useEffect(() => {
+    if (idParam) {
+      buscar();
+    }
+  }, [idParam, buscar]);
 
   return (
-    <div className='container'>
-      <Card title='Cadastro de Funcionarios'>
-        <div className='row'>
-          <div className='col-lg-12'>
-            <div className='bs-component'>
-              <FormGroup label='Nome do Funcionario: *' htmlFor='inputNomeFuncionario'>
+    <div className="container">
+      <Card title="Cadastro de Funcionários">
+        <div className="row">
+          <div className="col-lg-12">
+            <div className="bs-component">
+              <FormGroup label="Nome Completo: *" htmlFor="inputNomeCompleto">
                 <input
-                  type='text'
-                  id='inputNomeFuncionario'
-                  value={nomeFuncionario}
-                  className='form-control'
-                  onChange={(e) => setNomeFuncionario(e.target.value)}
+                  type="text"
+                  id="inputNomeCompleto"
+                  value={nomeCompleto}
+                  className="form-control"
+                  onChange={(e) => setNomeCompleto(e.target.value)}
                 />
               </FormGroup>
+              <FormGroup label="Setor: *" htmlFor="inputSetor">
+                <select
+                  id="inputSetor"
+                  className="form-control"
+                  value={setor}
+                  onChange={(e) => setSetor(e.target.value)}
+                >
+                  <option value="">Selecione...</option>
+                  <option value="Geral">Geral</option>
+                  <option value="Clínico">Clínico</option>
+                  <option value="RH">Recursos Humanos</option>
+                </select>
+              </FormGroup>
 
-              <FormGroup label='CPF: *' htmlFor='inputCpf'>
+              <FormGroup
+                label="Tipo de Funcionário: *"
+                htmlFor="inputTipoFuncionario"
+              >
+                <select
+                  id="inputTipoFuncionario"
+                  className="form-control"
+                  value={tipoFuncionario}
+                  onChange={(e) => setTipoFuncionario(e.target.value)}
+                >
+                  <option value="">Selecione...</option>
+                  {dadosTipoFuncionarios.map((dado) => (
+                    <option key={dado.id} value={dado.id}>
+                      {dado.tipo}
+                    </option>
+                  ))}
+                </select>
+              </FormGroup>
+              <FormGroup label="Gênero: *" htmlFor="inputGenero">
                 <input
-                  type='number'
-                  id='inputCpf'
+                  type="text"
+                  id="inputGenero"
+                  value={genero}
+                  className="form-control"
+                  onChange={(e) => setGenero(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup label="CPF: *" htmlFor="inputCpf">
+                <input
+                  type="text"
+                  id="inputCpf"
                   value={cpf}
-                  className='form-control'
+                  className="form-control"
                   onChange={(e) => setCpf(e.target.value)}
                 />
               </FormGroup>
-
-              <FormGroup label='Data de Nascimento: *' htmlFor='inputDataNascimento'>
+              <FormGroup
+                label="Data de Nascimento: *"
+                htmlFor="inputDataNascimento"
+              >
                 <input
-                  type='number'
-                  id='inputDataNascimento'
+                  type="date"
+                  id="inputDataNascimento"
                   value={dataNascimento}
-                  className='form-control'
+                  className="form-control"
                   onChange={(e) => setDataNascimento(e.target.value)}
                 />
               </FormGroup>
-
-              <FormGroup label='Email: *' htmlFor='inputEmail'>
+              <FormGroup label="Estado Civil: *" htmlFor="inputEstadoCivil">
                 <input
-                  type='text'
-                  id='inputEmail'
-                  value={email}
-                  className='form-control'
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="text"
+                  id="inputEstadoCivil"
+                  value={estadoCivil}
+                  className="form-control"
+                  onChange={(e) => setEstadoCivil(e.target.value)}
                 />
               </FormGroup>
-
-              <FormGroup label='Logradouro: *' htmlFor='inputLogradouro'>
-                <input
-                  id='inputLogradouro'
-                  className='form-control'
-                  value={logradouro}
-                  onChange={(e) => setLogradouro(e.target.value)}
+              <br />
+              <SubCard title="Contatos">
+                <div className="form-group">
+                  <label>Telefone Celular:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={telefoneCelular}
+                    onChange={(e) => setTelefoneCelular(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Telefone Fixo:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={telefoneFixo}
+                    onChange={(e) => setTelefoneFixo(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Email:</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </SubCard>
+              <Stack spacing={1} padding={1} direction="row">
+                <button
+                  onClick={salvar}
+                  type="button"
+                  className="btn btn-success"
                 >
-                </input>
-              </FormGroup>
-
-              <FormGroup label='Numero: *' htmlFor='inputNumero'>
-                <input
-                  id='inputNumero'
-                  className='form-control'
-                  value={numero}
-                  onChange={(e) => setNumero(e.target.value)}
-                >
-                </input>
-              </FormGroup>
-
-              <FormGroup label='Complemento: *' htmlFor='inputComplemento'>
-                <input
-                  id='inputComplemento'
-                  className='form-control'
-                  value={complemento}
-                  onChange={(e) => setComplemento(e.target.value)}
-                >
-                </input>
-              </FormGroup>
-
-              <FormGroup label='Bairro: *' htmlFor='inputBairro'>
-                <input
-                  id='inputBairro'
-                  className='form-control'
-                  value={bairro}
-                  onChange={(e) => setBairro(e.target.value)}
-                >
-                </input>
-              </FormGroup>
-
-              <FormGroup label='Cidade: *' htmlFor='inputCidade'>
-                <input
-                  id='inputCidade'
-                  className='form-control'
-                  value={cidade}
-                  onChange={(e) => setCidade(e.target.value)}
-                >
-                </input>
-              </FormGroup>
-
-              <FormGroup label='Estado: *' htmlFor='inputCidade'>
-                <input
-                  id='inputEstado'
-                  className='form-control'
-                  value={estado}
-                  onChange={(e) => setEstado(e.target.value)}
-                >
-                </input>
-              </FormGroup>
-
-              <FormGroup label='Cep: *' htmlFor='inputCep'>
-                <input
-                  id='inputCep'
-                  className='form-control'
-                  value={cep}
-                  onChange={(e) => setCep(e.target.value)}
-                >
-                </input>
-              </FormGroup>
-
-              <Stack spacing={1} padding={1} direction='row'>
-                <button onClick={salvar} type='button' className='btn btn-success'>
                   Salvar
                 </button>
-                <button onClick={inicializar} type='button' className='btn btn-danger'>
+                <button
+                  onClick={inicializar}
+                  type="button"
+                  className="btn btn-danger"
+                >
                   Cancelar
                 </button>
               </Stack>
