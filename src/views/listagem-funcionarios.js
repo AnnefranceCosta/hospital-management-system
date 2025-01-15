@@ -1,10 +1,6 @@
 import React from 'react';
 
 import Card from '../components/card';
-<<<<<<< HEAD
-=======
-
->>>>>>> cfe5ef7a63be80941d0248afcbfdddcbc42b9ce8
 import { mensagemSucesso, mensagemErro } from '../components/toastr';
 
 import '../custom.css';
@@ -23,6 +19,7 @@ const baseURL = `${BASE_URL}/funcionarios`;
 
 function ListagemFuncionarios() {
   const navigate = useNavigate();
+  const [dados, setDados] = React.useState([]);
 
   const cadastrar = () => {
     navigate('/cadastro-funcionarios');
@@ -32,57 +29,30 @@ function ListagemFuncionarios() {
     navigate(`/cadastro-funcionarios/${id}`);
   };
 
-  const [dados, setDados] = React.useState([]);
-
   async function excluir(id) {
-    let url = `${baseURL}/${id}`;
-    await axios
-      .delete(url, {
+    try {
+      await axios.delete(`${baseURL}/${id}`, {
         headers: { 'Content-Type': 'application/json' },
-      })
-<<<<<<< HEAD
-      .then(() => {
-        mensagemSucesso(`Funcionário excluído com sucesso!`);
-        setDados(dados.filter((dado) => dado.id !== id));
-      })
-      .catch(() => {
-        mensagemErro(`Erro ao excluir funcionário`);
-=======
-      .then(function (response) {
-        mensagemSucesso('Funcionário excluído com sucesso!');
-        setDados(
-          dados.filter((dado) => {
-            return dado.id !== id;
-          })
-        );
-      })
-      .catch(function (error) {
-        mensagemErro('Erro ao excluir o funcionário.');
->>>>>>> cfe5ef7a63be80941d0248afcbfdddcbc42b9ce8
       });
+      mensagemSucesso('Funcionário excluído com sucesso!');
+      setDados(dados.filter((dado) => dado.id !== id));
+    } catch (error) {
+      mensagemErro('Erro ao excluir funcionário.');
+    }
   }
 
   React.useEffect(() => {
-<<<<<<< HEAD
     axios
       .get(baseURL)
       .then((response) => {
         setDados(response.data);
       })
       .catch(() => {
-        mensagemErro('Erro ao carregar informações do funcionário');
+        mensagemErro('Erro ao carregar informações do funcionário.');
       });
   }, []);
 
   if (!dados.length) return <p>Carregando funcionários...</p>;
-=======
-    axios.get(baseURL).then((response) => {
-      setDados(response.data);
-    });
-  }, []);
-
-  if (!dados) return null;
->>>>>>> cfe5ef7a63be80941d0248afcbfdddcbc42b9ce8
 
   return (
     <div className='container'>
@@ -118,7 +88,9 @@ function ListagemFuncionarios() {
                       <td>{dado.tipoFuncionario}</td>
                       <td>{dado.genero}</td>
                       <td>{dado.cpf}</td>
-                      <td>{new Date(dado.dataNascimento).toLocaleDateString()}</td>
+                      <td>
+                        {new Date(dado.dataNascimento).toLocaleDateString()}
+                      </td>
                       <td>{dado.estadoCivil}</td>
                       <td>
                         <Stack spacing={1} padding={0} direction='row'>
