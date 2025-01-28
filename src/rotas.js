@@ -40,10 +40,7 @@ function Rotas(props) {
         <Route path='/listagem-lotes' element={<ListagemLotes />} />
         <Route path='/cadastro-categoriaMedicamentos/:idParam?' element={<CadastroCategoriaMedicamentos />} />
         <Route path='/listagem-categoriaMedicamentos' element={<ListagemCategoriaMedicamentos />} />
-<<<<<<< HEAD
 
-=======
->>>>>>> cfe5ef7a63be80941d0248afcbfdddcbc42b9ce8
         <Route path='/cadastro-pacientes/:idParam?' element={<CadastroPacientes />} />
         <Route path='/listagem-pacientes' element={<ListagemPacientes />} />
         <Route path='/cadastro-responsavelLegal/:idParam?' element={<CadastroResponsavelLegal />} />
