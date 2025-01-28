@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
@@ -19,29 +19,31 @@ function CadastroPacientes() {
   const [id, setId] = useState('');
   const [nomeCompleto, setNomeCompleto] = useState('');
   const [cpf, setCpf] = useState('');
-  const [dataNascimento, setDataNascimento] = useState('');
+  const [dataNascimento, setDataNascimento] = useState('0');
   const [genero, setGenero] = useState('');
   const [tipoSanguineo, setTipoSanguineo] = useState('');
   const [alergias, setAlergias] = useState('');
-  const [carteirinhaSus, setCarteirinhaSus] = useState('');
-  const [telefoneCelular, setTelefoneCelular] = useState('');
-  const [telefoneFixo, setTelefoneFixo] = useState('');
+  const [carteirinhaSus, setCarteirinhaSus] = useState('0');
+  const [telefoneCelular, setTelefoneCelular] = useState('0');
+  const [telefoneFixo, setTelefoneFixo] = useState('0');
   const [email, setEmail] = useState('');
   const [profissao, setProfissao] = useState('');
   const [religiao, setReligiao] = useState('');
   const [convenios, setConvenios] = useState(false);
-  const [numeroCarteirinha, setNumeroCarteirinha] = useState('');
+  const [numeroCarteirinha, setNumeroCarteirinha] = useState('0');
   const [responsavelLegal, setResponsavelLegal] = useState(false);
   const [endereco, setEndereco] = useState({
     logradouro: '',
-    numero: '',
-    cep: '',
+    numero: '0',
+    cep: '0',
     bairro: '',
     uf: '',
     complemento: '',
   });
 
-  const inicializar = useCallback(() => {
+  const [dadosPaciente, setDados] = React.useState([]);
+
+  function inicializar() {
     if (idParam == null) {
       setId('');
       setNomeCompleto('');
@@ -68,31 +70,28 @@ function CadastroPacientes() {
         complemento: '',
       });
     } else {
-      axios.get(`${baseURL}/${idParam}`).then((response) => {
-        const paciente = response.data;
-        setId(paciente.id);
-        setNomeCompleto(paciente.nomeCompleto);
-        setCpf(paciente.cpf);
-        setDataNascimento(paciente.dataNascimento);
-        setGenero(paciente.genero);
-        setTipoSanguineo(paciente.tipoSanguineo);
-        setAlergias(paciente.alergias);
-        setCarteirinhaSus(paciente.carteirinhaSus);
-        setTelefoneCelular(paciente.telefoneCelular);
-        setTelefoneFixo(paciente.telefoneFixo);
-        setEmail(paciente.email);
-        setProfissao(paciente.profissao);
-        setReligiao(paciente.religiao);
-        setConvenios(paciente.convenios);
-        setNumeroCarteirinha(paciente.numeroCarteirinha);
-        setResponsavelLegal(paciente.responsavelLegal);
-        setEndereco(paciente.endereco);
-      });
+      setId(dadosPaciente.id);
+      setNomeCompleto(dadosPaciente.nomeCompleto);
+      setCpf(dadosPaciente.cpf);
+      setDataNascimento(dadosPaciente.dataNascimento);
+      setGenero(dadosPaciente.genero);
+      setTipoSanguineo(dadosPaciente.tipoSanguineo);
+      setAlergias(dadosPaciente.alergias);
+      setCarteirinhaSus(dadosPaciente.carteirinhaSus);
+      setTelefoneCelular(dadosPaciente.telefoneCelular);
+      setTelefoneFixo(dadosPaciente.telefoneFixo);
+      setEmail(dadosPaciente.email);
+      setProfissao(dadosPaciente.profissao);
+      setReligiao(dadosPaciente.religiao);
+      setConvenios(dadosPaciente.convenios);
+      setNumeroCarteirinha(dadosPaciente.numeroCarteirinha);
+      setResponsavelLegal(dadosPaciente.responsavelLegal);
+      setEndereco(dadosPaciente.endereco);
     }
-  }, [idParam, baseURL]);
+  }
 
-  const salvar = async () => {
-    const data = {
+  async function salvar() {
+    let data = {
       id,
       nomeCompleto,
       cpf,
@@ -111,27 +110,65 @@ function CadastroPacientes() {
       responsavelLegal,
       endereco,
     };
-    try {
-      if (idParam == null) {
-        await axios.post(baseURL, data, {
+    data = JSON.stringify(data);
+    if (idParam == null) {
+      await axios
+        .post(baseURL, data, {
           headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Paciente ${nomeCompleto} cadastrado com sucesso!`);
+          navigate(`/listagem-pacientes`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
         });
-        mensagemSucesso(`Paciente ${nomeCompleto} cadastrado com sucesso!`);
-      } else {
-        await axios.put(`${baseURL}/${idParam}`, data, {
+    } else {
+      await axios
+        .put(`${baseURL}/${idParam}`, data, {
           headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Paciente ${nomeCompleto} cadastrado com sucesso!`);
+          navigate(`/listagem-pacientes`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
         });
-        mensagemSucesso(`Paciente ${nomeCompleto} atualizado com sucesso!`);
-      }
-      navigate(`/listagem-pacientes`);
-    } catch (error) {
-      mensagemErro(error.response?.data || 'Erro ao salvar paciente.');
     }
-  };
+  }
+
+  async function buscar() {
+    if (idParam != null){
+    await axios.get(`${baseURL}/${idParam}`).then((response) => {
+      setDados(response.data);
+
+      setId(dadosPaciente.id);
+      setNomeCompleto(dadosPaciente.nomeCompleto);
+      setCpf(dadosPaciente.cpf);
+      setDataNascimento(dadosPaciente.dataNascimento);
+      setGenero(dadosPaciente.genero);
+      setTipoSanguineo(dadosPaciente.tipoSanguineo);
+      setAlergias(dadosPaciente.alergias);
+      setCarteirinhaSus(dadosPaciente.carteirinhaSus);
+      setTelefoneCelular(dadosPaciente.telefoneCelular);
+      setTelefoneFixo(dadosPaciente.telefoneFixo);
+      setEmail(dadosPaciente.email);
+      setProfissao(dadosPaciente.profissao);
+      setReligiao(dadosPaciente.religiao);
+      setConvenios(dadosPaciente.convenios);
+      setNumeroCarteirinha(dadosPaciente.numeroCarteirinha);
+      setResponsavelLegal(dadosPaciente.responsavelLegal);
+      setEndereco(dadosPaciente.endereco);
+    });
+  }
+}
 
   useEffect(() => {
-    inicializar();
-  }, [inicializar]);
+    buscar(); // eslint-disable-next-line
+  }, [id]);
+
+  if (!dadosPaciente) return null;
 
   return (
     <div className='container'>
@@ -225,79 +262,77 @@ function CadastroPacientes() {
                     onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
-                </SubCard>
-                <br></br>
-                <SubCard title='Endereços'>
-  <div className='form-group'>
-    <label>Logradouro:</label>
-    <input
-      type='text'
-      className='form-control'
-      value={endereco.logradouro}
-      onChange={(e) =>
-        setEndereco({ ...endereco, logradouro: e.target.value })
-      }
-    />
-  </div>
-  <div className='form-group'>
-    <label>Número:</label>
-    <input
-      type='text'
-      className='form-control'
-      value={endereco.numero}
-      onChange={(e) =>
-        setEndereco({ ...endereco, numero: e.target.value })
-      }
-    />
-  </div>
-  <div className='form-group'>
-    <label>CEP:</label>
-    <input
-      type='text'
-      className='form-control'
-      value={endereco.cep}
-      onChange={(e) =>
-        setEndereco({ ...endereco, cep: e.target.value })
-      }
-    />
-  </div>
-  <div className='form-group'>
-    <label>Bairro:</label>
-    <input
-      type='text'
-      className='form-control'
-      value={endereco.bairro}
-      onChange={(e) =>
-        setEndereco({ ...endereco, bairro: e.target.value })
-      }
-    />
-  </div>
-  <div className='form-group'>
-    <label>UF:</label>
-    <input
-      type='text'
-      className='form-control'
-      value={endereco.uf}
-      onChange={(e) =>
-        setEndereco({ ...endereco, uf: e.target.value })
-      }
-    />
-  </div>
-  <div className='form-group'>
-    <label>Complemento:</label>
-    <input
-      type='text'
-      className='form-control'
-      value={endereco.complemento}
-      onChange={(e) =>
-        setEndereco({ ...endereco, complemento: e.target.value })
-      }
-    />
-  </div>
-</SubCard>
+              </SubCard>
+              <br></br>
+              <SubCard title='Endereços'>
+                <div className='form-group'>
+                  <label>Logradouro:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={endereco.logradouro}
+                    onChange={(e) =>
+                      setEndereco({ ...endereco, logradouro: e.target.value })
+                    }
+                  />
+                </div>
+                <div className='form-group'>
+                  <label>Número:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={endereco.numero}
+                    onChange={(e) =>
+                      setEndereco({ ...endereco, numero: e.target.value })
+                    }
+                  />
+                </div>
+                <div className='form-group'>
+                  <label>CEP:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={endereco.cep}
+                    onChange={(e) =>
+                      setEndereco({ ...endereco, cep: e.target.value })
+                    }
+                  />
+                </div>
+                <div className='form-group'>
+                  <label>Bairro:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={endereco.bairro}
+                    onChange={(e) =>
+                      setEndereco({ ...endereco, bairro: e.target.value })
+                    }
+                  />
+                </div>
+                <div className='form-group'>
+                  <label>UF:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={endereco.uf}
+                    onChange={(e) =>
+                      setEndereco({ ...endereco, uf: e.target.value })
+                    }
+                  />
+                </div>
+                <div className='form-group'>
+                  <label>Complemento:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={endereco.complemento}
+                    onChange={(e) =>
+                      setEndereco({ ...endereco, complemento: e.target.value })
+                    }
+                  />
+                </div>
+              </SubCard>
 
-
-              {/* Adicione os demais campos aqui */}
               <Stack spacing={1} padding={1} direction='row'>
                 <button onClick={salvar} type='button' className='btn btn-success'>
                   Salvar
