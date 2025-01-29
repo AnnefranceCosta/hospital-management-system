@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
 import Stack from "@mui/material/Stack";
 import Card from "../components/card";
 import FormGroup from "../components/form-group";
 import SubCard from "../components/sub-card";
 import { mensagemSucesso, mensagemErro } from "../components/toastr";
+
 import axios from "axios";
 import { BASE_URL } from "../config/axios";
 import "../custom.css";
@@ -15,46 +17,64 @@ function CadastroFuncionarios() {
   const baseURL = `${BASE_URL}/funcionarios`;
 
   const [dadosTipoFuncionarios, setDadosTipoFuncionarios] = useState([]);
-  const [id, setId] = useState("");
-  const [nomeCompleto, setNomeCompleto] = useState("");
-  const [setor, setSetor] = useState("");
+  const [id, setId] = useState('');
+  const [nomeCompleto, setNomeCompleto] = useState('');
+  const [setor, setSetor] = useState('');
   const [tipoFuncionario, setTipoFuncionario] = useState(0);
-  const [genero, setGenero] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [dataNascimento, setDataNascimento] = useState("");
-  const [estadoCivil, setEstadoCivil] = useState("");
-  const [telefoneCelular, setTelefoneCelular] = useState("");
-  const [telefoneFixo, setTelefoneFixo] = useState("");
-  const [email, setEmail] = useState("");
-  const [dados, setDados] = useState({});
+  const [genero, setGenero] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [dataNascimento, setDataNascimento] = useState('');
+  const [estadoCivil, setEstadoCivil] = useState('');
+  const [telefoneCelular, setTelefoneCelular] = useState('');
+  const [telefoneFixo, setTelefoneFixo] = useState('');
+  const [email, setEmail] = useState('');
+  const [endereco, setEndereco] = useState({
+    logradouro: '',
+    numero: '',
+    cep: '',
+    bairro: '',
+    uf: '',
+    complemento: '',
+  });
 
-  const inicializar = useCallback(() => {
-    if (!idParam) {
-      setId("");
-      setNomeCompleto("");
-      setSetor("");
+  const [dadosFuncionario, setDados] = React.useState([]);
+
+  function inicializar() {
+    if (!idParam == null) {
+      setId('');
+      setNomeCompleto('');
+      setSetor('');
       setTipoFuncionario(0);
-      setGenero("");
-      setCpf("");
-      setDataNascimento("");
-      setEstadoCivil("");
-      setTelefoneCelular("");
-      setTelefoneFixo("");
-      setEmail("");
+      setGenero('');
+      setCpf('');
+      setDataNascimento('');
+      setEstadoCivil('');
+      setTelefoneCelular('');
+      setTelefoneFixo('');
+      setEmail('');
+      setEndereco({
+        logradouro: '',
+        numero: '',
+        cep: '',
+        bairro: '',
+        uf: '',
+        complemento: '',
+      });
     } else {
-      setId(dados.id);
-      setNomeCompleto(dados.nomeCompleto);
-      setSetor(dados.setor);
-      setTipoFuncionario(dados.tipoFuncionario);
-      setGenero(dados.genero);
-      setCpf(dados.cpf);
-      setDataNascimento(dados.dataNascimento);
-      setEstadoCivil(dados.estadoCivil);
+      setId(dadosFuncionario.id);
+      setNomeCompleto(dadosFuncionario.nomeCompleto);
+      setSetor(dadosFuncionario.setor);
+      setTipoFuncionario(dadosFuncionario.tipoFuncionario);
+      setGenero(dadosFuncionario.genero);
+      setCpf(dadosFuncionario.cpf);
+      setDataNascimento(dadosFuncionario.dataNascimento);
+      setEstadoCivil(dadosFuncionario.estadoCivil);
+      setEndereco(dadosFuncionario.endereco);
     }
-  }, [dados, idParam]);
+  }
 
-  const salvar = async () => {
-    const data = {
+  async function salvar() {
+    let data = {
       id,
       nomeCompleto,
       setor,
@@ -66,52 +86,63 @@ function CadastroFuncionarios() {
       telefoneCelular,
       telefoneFixo,
       email,
+      endereco,
     };
 
-    try {
-      if (!idParam) {
-        await axios.post(baseURL, data, {
+    data = JSON.stringify(data);
+    if (!idParam == null) {
+        await axios
+        .post(baseURL, data, {
           headers: { "Content-Type": "application/json" },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Funcionário ${nomeCompleto} cadastrado com sucesso!`);
+          navigate(`/listagem-funcionarios`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
         });
-        mensagemSucesso(`Funcionário ${nomeCompleto} cadastrado com sucesso!`);
-      } else {
-        await axios.put(`${baseURL}/${idParam}`, data, {
+    } else {
+        await axios
+        .put(`${baseURL}/${idParam}`, data, {
           headers: { "Content-Type": "application/json" },
-        });
-        mensagemSucesso(`Funcionário ${nomeCompleto} alterado com sucesso!`);
-      }
-      navigate("/listagem-funcionarios");
-    } catch (error) {
-      mensagemErro(error.response?.data || "Erro ao salvar funcionário.");
-    }
-  };
+        })
+        .then(function (response) {
+          mensagemSucesso(`Funcionário ${nomeCompleto} alterado com sucesso!`);
+          navigate(`/listagem-funcionarios`);
+      })
+      .catch (function (error) {
+      mensagemErro(error.response.data);
+    });
+  }
+}
 
-  const buscar = useCallback(async () => {
-    try {
-      const response = await axios.get(`${baseURL}/${idParam}`);
-      setDados(response.data);
-    } catch (error) {
-      mensagemErro("Erro ao buscar dados do funcionário.");
+  async function buscar() {
+    if (idParam != null){
+      await axios.get(`${baseURL}/${idParam}`).then((response) => {
+        setDados(response.data);
+
+        setId(dadosFuncionario.id);
+        setNomeCompleto(dadosFuncionario.nomeCompleto);
+        setSetor(dadosFuncionario.setor);
+        setTipoFuncionario(dadosFuncionario.tipoFuncionario);
+        setGenero(dadosFuncionario.genero);
+        setCpf(dadosFuncionario.cpf);
+        setDataNascimento(dadosFuncionario.dataNascimento);
+        setEstadoCivil(dadosFuncionario.estadoCivil);
+        setTelefoneCelular(dadosFuncionario.telefoneCelular);
+        setTelefoneFixo(dadosFuncionario.telefoneFixo);
+        setEmail(dadosFuncionario.email);
+        setEndereco(dadosFuncionario.endereco);
+      });
     }
-  }, [baseURL, idParam]);
+}
 
   useEffect(() => {
-    const fetchTiposFuncionarios = async () => {
-      try {
-        const response = await axios.get(`${BASE_URL}/tiposFuncionarios`);
-        setDadosTipoFuncionarios(response.data);
-      } catch (error) {
-        mensagemErro("Erro ao carregar os tipos de funcionários.");
-      }
-    };
-    fetchTiposFuncionarios();
-  }, []);
+    buscar(); // eslint-disable-next-line
+  }, [id]);
 
-  useEffect(() => {
-    if (idParam) {
-      buscar();
-    }
-  }, [idParam, buscar]);
+if (!dadosFuncionario) return null;
 
   return (
     <div className="container">
@@ -228,6 +259,76 @@ function CadastroFuncionarios() {
                   />
                 </div>
               </SubCard>
+
+              <SubCard title='Endereços'>
+                <div className='form-group'>
+                  <label>Logradouro:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={endereco.logradouro}
+                    onChange={(e) =>
+                      setEndereco({ ...endereco, logradouro: e.target.value })
+                    }
+                  />
+                </div>
+                <div className='form-group'>
+                  <label>Número:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={endereco.numero}
+                    onChange={(e) =>
+                      setEndereco({ ...endereco, numero: e.target.value })
+                    }
+                  />
+                </div>
+                <div className='form-group'>
+                  <label>CEP:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={endereco.cep}
+                    onChange={(e) =>
+                      setEndereco({ ...endereco, cep: e.target.value })
+                    }
+                  />
+                </div>
+                <div className='form-group'>
+                  <label>Bairro:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={endereco.bairro}
+                    onChange={(e) =>
+                      setEndereco({ ...endereco, bairro: e.target.value })
+                    }
+                  />
+                </div>
+                <div className='form-group'>
+                  <label>UF:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={endereco.uf}
+                    onChange={(e) =>
+                      setEndereco({ ...endereco, uf: e.target.value })
+                    }
+                  />
+                </div>
+                <div className='form-group'>
+                  <label>Complemento:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={endereco.complemento}
+                    onChange={(e) =>
+                      setEndereco({ ...endereco, complemento: e.target.value })
+                    }
+                  />
+                </div>
+              </SubCard>
+
               <Stack spacing={1} padding={1} direction="row">
                 <button
                   onClick={salvar}
