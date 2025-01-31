@@ -2,22 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
-
 import Card from '../components/card';
 import FormGroup from '../components/form-group';
-
 import { mensagemSucesso, mensagemErro } from '../components/toastr';
-
-import '../custom.css';
 
 import axios from 'axios';
 import { BASE_URL } from '../config/axios';
+import '../custom.css';
 
 function CadastroLotes() {
   const { idParam } = useParams();
-
   const navigate = useNavigate();
-
   const baseURL = `${BASE_URL}/lotes`;
 
   const [id, setId] = useState('');
@@ -26,7 +21,7 @@ function CadastroLotes() {
   const [dataFabricacao, setDataFabricacao] = useState('');
   const [dataValidade, setDataValidade] = useState('');
 
-  const [dados, setDados] = useState({});
+  const [dados, setDados] = React.useState([]);
 
   function inicializar() {
     if (idParam == null) {
@@ -36,16 +31,16 @@ function CadastroLotes() {
       setDataFabricacao('');
       setDataValidade('');
     } else {
-      setId(dados.id || '');
-      setQuantidadeEstoque(dados.quantidadeEstoque || 0);
-      setFornecedor(dados.fornecedor || '');
-      setDataFabricacao(dados.dataFabricacao || '');
-      setDataValidade(dados.dataValidade || '');
+      setId(dados.id);
+      setQuantidadeEstoque(dados.quantidadeEstoque);
+      setFornecedor(dados.fornecedor);
+      setDataFabricacao(dados.dataFabricacao);
+      setDataValidade(dados.dataValidade);
     }
   }
 
   async function salvar() {
-    const data = {
+    let data = {
       id,
       quantidadeEstoque,
       fornecedor,
@@ -53,37 +48,44 @@ function CadastroLotes() {
       dataValidade,
     };
 
-    if (idParam == null) {
-      await axios
+    data = JSON.stringify(data);
+    if (!idParam == null) {
+        await axios
         .post(baseURL, data, {
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
         })
-        .then(() => {
-          mensagemSucesso('Lote cadastrado com sucesso!');
+        .then(function (response) {
+          mensagemSucesso(`Lote de ${fornecedor} cadastrado com sucesso!`);
           navigate(`/listagem-lotes`);
         })
-        .catch((error) => {
+        .catch(function (error) {
           mensagemErro(error.response.data);
         });
     } else {
-      await axios
+        await axios
         .put(`${baseURL}/${idParam}`, data, {
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
         })
-        .then(() => {
-          mensagemSucesso('Lote atualizado com sucesso!');
+        .then(function (response) {
+          mensagemSucesso(`Lote de ${fornecedor} alterado com sucesso!`);
           navigate(`/listagem-lotes`);
-        })
-        .catch((error) => {
-          mensagemErro(error.response.data);
-        });
-    }
+      })
+      .catch (function (error) {
+      mensagemErro(error.response.data);
+    });
+  }
   }
 
   async function buscar() {
     if (idParam) {
       await axios.get(`${baseURL}/${idParam}`).then((response) => {
         setDados(response.data);
+
+        setId(dados.id);
+        setQuantidadeEstoque(dados.quantidadeEstoque);
+        setFornecedor(dados.fornecedor);
+        setDataFabricacao(dados.dataFabricacao);
+        setDataValidade(dados.dataValidade);
       });
     }
   }
@@ -91,7 +93,9 @@ function CadastroLotes() {
   useEffect(() => {
     buscar();
     inicializar(); // eslint-disable-next-line
-  }, [idParam]);
+  }, [id]);
+
+  if (!dados) return null;
 
   return (
     <div className='container'>
