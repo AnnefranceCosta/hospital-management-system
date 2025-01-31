@@ -4,69 +4,100 @@ import { useNavigate, useParams } from "react-router-dom";
 import Stack from "@mui/material/Stack";
 import Card from "../components/card";
 import FormGroup from "../components/form-group";
-
 import { mensagemSucesso, mensagemErro } from "../components/toastr";
 
 import axios from "axios";
-import { BASE_URL, BASE_URL2 } from "../config/axios"; // Use a constante BASE_URL aqui
+import { BASE_URL} from "../config/axios"; 
+import '../custom.css';
 
 function CadastroAgendamentos() {
   const { idParam } = useParams();
   const navigate = useNavigate();
+  const baseURL = `${BASE_URL}/agendamentos`; 
 
-  const baseURL = `${BASE_URL}/agendamentos`; // Use BASE_URL
+  const [id, setId] = useState('');
   const [pacientes, setPacientes] = useState([]);
   const [medicos, setMedicos] = useState([]);
-  const [pacienteId, setPacienteId] = useState(""); // Corrigido: pacienteId ao invés de pacientesId
-  const [medicoId, setMedicoId] = useState("");
-  const [dataHora, setDataHora] = useState("");
+  const [pacienteId, setPacienteId] = useState(''); 
+  const [medicoId, setMedicoId] = useState('');
+  const [dataHora, setDataHora] = useState('');
 
-  const [agendamento, setAgendamento] = useState([]);
+  const [dadosAgendamento, setAgendamento] = React.useState([]);
 
-  useEffect(() => {
-    axios.get(`${BASE_URL2}/pacientes`).then((response) => {
-      // Use BASE_URL
-      setPacientes(response.data);
-    });
-    axios.get(`${BASE_URL}/funcionarios`).then((response) => {
-      // Use BASE_URL
-      setMedicos(response.data);
-    });
-    if (idParam) {
-      axios.get(`${baseURL}/${idParam}`).then((response) => {
-        setAgendamento(response.data);
-        setPacienteId(response.data.pacienteId);
-        setMedicoId(response.data.medicoId);
-        setDataHora(response.data.dataHora);
-      });
+  function inicializar() {
+    if (idParam == null) {
+      setId('');
+      setPacienteId('');
+      setMedicoId('');
+      setPacientes('');
+      setMedicos('');
+      setDataHora('');
+    }else{
+      setPacienteId(dadosAgendamento.pacienteId);
+      setMedicoId(dadosAgendamento.medicoId);
+      setPacientes(dadosAgendamento.paciente);
+      setMedicos(dadosAgendamento.medicoId);
+      setDataHora(dadosAgendamento.dataHora);
     }
-  }, [idParam]);
+  }
 
-  const salvar = async () => {
-    const data = {
+  async function salvar() {
+    let data = {
+      id,
       pacienteId,
       medicoId,
-      dataHora,
+      pacientes,
+      medicos,
+      dataHora
     };
-
-    if (idParam) {
+    data = JSON.stringify(data);
+    if (idParam == null) {
       await axios
-        .put(`${baseURL}/${idParam}`, data)
-        .then(() => {
-          mensagemSucesso("Agendamento atualizado com sucesso!");
-          navigate("/listagem-agendamentos");
-        })
-        .catch((error) => mensagemErro(error.response.data));
-    } else {
+      .post(baseURL, data, {
+        headers:{ 'Content-Type': 'application/json'},
+      })
+      .then(function (response) {
+        mensagemSucesso(`Agendamento ${dataHora} cadastrado com sucesso!`);
+        navigate(`/listagem-agendamentos`);
+      })
+      .catch(function (error) {
+        mensagemErro(error.response.data);
+      });
+    }else{
       await axios
-        .post(baseURL, data)
-        .then(() => {
-          mensagemSucesso("Agendamento realizado com sucesso!");
-          navigate("/listagem-agendamentos");
+        .put(`${baseURL}/${idParam}`, data, {
+          headers: { 'Content-Type': 'application/json' },
         })
-        .catch((error) => mensagemErro(error.response.data));
+        .then(function (response) {
+          mensagemSucesso(`Agendamento ${dataHora} cadastrado com sucesso!`);
+          navigate(`/listagem-agendamentos`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
     }
-  };
+  }
+
+  async function buscar() {
+    if (idParam != null){
+      await axios.get(`${baseURL}/${idParam}`).then((response) => {
+        setAgendamento(response.data);
+
+        setId(dadosAgendamento.id);
+        setPacienteId(dadosAgendamento.pacienteId);
+        setMedicoId(dadosAgendamento.medicoId);
+        setPacientes(dadosAgendamento);
+        setMedicos(dadosAgendamento);
+        setDataHora(dadosAgendamento);
+      });
+    }
+  }
+
+  useEffect(() => {
+    buscar(); // eslint-disable-next-line
+  }, [id]);
+
+  if (!dadosAgendamento) return null;
 
   return (
     <div className="container">
@@ -122,18 +153,10 @@ function CadastroAgendamentos() {
               </FormGroup>
 
               <Stack spacing={1} padding={1} direction="row">
-                <button
-                  type="button"
-                  onClick={salvar}
-                  className="btn btn-success"
-                >
+                <button onClick={salvar} type="button" className="btn btn-success">
                   Salvar
                 </button>
-                <button
-                  type="button"
-                  onClick={() => navigate("/listagem-agendamentos")}
-                  className="btn btn-danger"
-                >
+                <button onClick={inicializar} type="button" className="btn btn-danger" >
                   Cancelar
                 </button>
               </Stack>
