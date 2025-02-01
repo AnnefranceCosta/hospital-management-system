@@ -2,52 +2,58 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import Stack from "@mui/material/Stack";
-
 import Card from "../components/card";
 import FormGroup from "../components/form-group";
-
 import { mensagemSucesso, mensagemErro } from "../components/toastr";
 
 import "../custom.css";
-
 import axios from "axios";
 import { BASE_URL } from "../config/axios";
 
 function CadastroMedicamento() {
   const { idParam } = useParams();
   const navigate = useNavigate();
-
   const baseURL = `${BASE_URL}/medicamentos`;
 
-  // Estados para os campos do formulário
-  const [id, setId] = useState("");
-  const [nomeMedicamento, setNomeMedicamento] = useState("");
-  const [quantidade, setQuantidade] = useState(0);
-  const [dosagem, setDosagem] = useState("");
-  const [formaFarmaceutica, setFormaFarmaceutica] = useState("");
-  const [categoria, setCategoria] = useState("");
-  const [tarja, setTarja] = useState("");
-  const [lote, setLote] = useState("");
+  const [id, setId] = useState('');
+  const [nomeMedicamento, setNomeMedicamento] = useState('');
+  const [quantidade, setQuantidade] = useState('0');
+  const [dosagem, setDosagem] = useState('0');
+  const [formaFarmaceutica, setFormaFarmaceutica] = useState('');
+  const [categoria, setCategoria] = useState('');
+  const [tarja, setTarja] = useState('');
+  const [lote, setLote] = useState('');
 
   const [categorias, setCategorias] = useState([]);
   const [tarjas, setTarjas] = useState(["Branca", "Vermelha", "Preta"]);
   const [lotes, setLotes] = useState([]);
 
+  const [dadosMedicamentos, setDados] = React.useState([]);
+
   function inicializar() {
     if (!idParam) {
-      setId("");
-      setNomeMedicamento("");
-      setQuantidade(0);
-      setDosagem("");
-      setFormaFarmaceutica("");
-      setCategoria("");
-      setTarja("");
-      setLote("");
+      setId('');
+      setNomeMedicamento('');
+      setQuantidade('0');
+      setDosagem('');
+      setFormaFarmaceutica('');
+      setCategoria('');
+      setTarja('');
+      setLote('');
+    } else {
+      setId(dadosMedicamentos.id);
+      setNomeMedicamento(dadosMedicamentos.nomeMedicamento);
+      setQuantidade(dadosMedicamentos.quantidade);
+      setDosagem(dadosMedicamentos.dosagem);
+      setFormaFarmaceutica(dadosMedicamentos.formaFarmaceutica);
+      setCategoria(dadosMedicamentos.categoria);
+      setTarja(dadosMedicamentos.tarja);
+      setLote(dadosMedicamentos.lote);
     }
   }
 
   async function salvar() {
-    const data = JSON.stringify({
+    let data = {
       id,
       nomeMedicamento,
       quantidade,
@@ -56,60 +62,58 @@ function CadastroMedicamento() {
       categoria,
       tarja,
       lote,
-    });
+    };
 
-    try {
-      if (!idParam) {
-        await axios.post(baseURL, data, {
-          headers: { "Content-Type": "application/json" },
+    data = JSON.stringify(data);
+    if (idParam == null) {
+      await axios
+        .post(baseURL, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Medicamento ${nomeMedicamento} cadastrado com sucesso!`);
+          navigate(`/listagem-medicamentos`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
         });
-        mensagemSucesso(
-          `Medicamento ${nomeMedicamento} cadastrado com sucesso!`
-        );
-      } else {
-        await axios.put(`${baseURL}/${idParam}`, data, {
-          headers: { "Content-Type": "application/json" },
+    } else {
+      await axios
+        .put(`${baseURL}/${idParam}`, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Medicamento ${nomeMedicamento} cadastrado com sucesso!`);
+          navigate(`/listagem-medicamentos`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
         });
-        mensagemSucesso(
-          `Medicamento ${nomeMedicamento} alterado com sucesso!`
-        );
-      }
-      navigate(`/listagem-medicamentos`);
-    } catch (error) {
-      mensagemErro(error.response?.data || "Erro ao salvar medicamento!");
     }
   }
 
   async function buscar() {
-    try {
-      const { data } = await axios.get(`${baseURL}/${idParam}`);
-      setId(data.id);
-      setNomeMedicamento(data.nomeMedicamento);
-      setQuantidade(data.quantidade);
-      setDosagem(data.dosagem);
-      setFormaFarmaceutica(data.formaFarmaceutica);
-      setCategoria(data.categoria);
-      setTarja(data.tarja);
-      setLote(data.lote);
-    } catch (error) {
-      mensagemErro("Erro ao buscar medicamento!");
+    if (idParam != null) {
+      await axios.get(`${baseURL}/${idParam}`).then((response) => {
+        setDados(response.data);
+
+        setId(dadosMedicamentos.id);
+        setNomeMedicamento(dadosMedicamentos.nomeMedicamento);
+        setQuantidade(dadosMedicamentos.quantidade);
+        setDosagem(dadosMedicamentos.dosagem);
+        setFormaFarmaceutica(dadosMedicamentos.formaFarmaceutica);
+        setCategoria(dadosMedicamentos.categoria);
+        setTarja(dadosMedicamentos.tarja);
+        setLote(dadosMedicamentos.lote);
+      });
     }
   }
 
   useEffect(() => {
-    if (idParam) buscar();
+    buscar(); // eslint-disable-next-line
+  }, [id]);
 
-    // Carregar categorias e lotes
-    axios
-      .get(`${BASE_URL}/categoriaMedicamentos`)
-      .then((response) => setCategorias(response.data))
-      .catch(() => mensagemErro("Erro ao carregar categorias!"));
-
-    axios
-      .get(`${BASE_URL}/lotes`)
-      .then((response) => setLotes(response.data))
-      .catch(() => mensagemErro("Erro ao carregar lotes!"));
-  }, [idParam]);
+  if (!dadosMedicamentos) return null;
 
   return (
     <div className="container">
@@ -216,17 +220,11 @@ function CadastroMedicamento() {
 
               <Stack spacing={1} padding={1} direction="row">
                 <button
-                  onClick={salvar}
-                  type="button"
-                  className="btn btn-success"
-                >
+                  onClick={salvar} type="button" className="btn btn-success">
                   Salvar
                 </button>
                 <button
-                  onClick={inicializar}
-                  type="button"
-                  className="btn btn-danger"
-                >
+                  onClick={inicializar} type="button" className="btn btn-danger">
                   Cancelar
                 </button>
               </Stack>
