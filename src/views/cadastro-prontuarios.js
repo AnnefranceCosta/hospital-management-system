@@ -27,8 +27,9 @@ function CadastroProntuario() {
   const [observacoes, setObservacoes] = useState('');
 
   const [listaMedicamentos, setListaMedicamentos] = useState([]);
+  const [dadosProntuario, setDados] = React.useState([]);
 
-  const inicializar = useCallback(() => {
+  function inicializar() {
     if (idParam == null) {
       setId('');
       setNomeCompleto('');
@@ -41,30 +42,21 @@ function CadastroProntuario() {
       setExamesLaudos('');
       setObservacoes('');
     } else {
-      axios.get(`${baseURL}/${idParam}`).then((response) => {
-        const prontuario = response.data;
-        setId(prontuario.id);
-        setNomeCompleto(prontuario.nomeCompleto);
-        setCrm(prontuario.crm);
-        setDataConsulta(prontuario.dataConsulta);
-        setMotivoConsulta(prontuario.motivoConsulta);
-        setSintomas(prontuario.sintomas);
-        setDiagnostico(prontuario.diagnostico);
-        setMedicamentos(prontuario.medicamentos);
-        setExamesLaudos(prontuario.examesLaudos);
-        setObservacoes(prontuario.observacoes);
-      });
+      setId(dadosProntuario.id);
+      setNomeCompleto(dadosProntuario.nomeCompleto);
+      setCrm(dadosProntuario.crm);
+      setDataConsulta(dadosProntuario.dataConsulta);
+      setMotivoConsulta(dadosProntuario.motivoConsulta);
+      setSintomas(dadosProntuario.sintomas);
+      setDiagnostico(dadosProntuario.diagnostico);
+      setMedicamentos(dadosProntuario.medicamentos);
+      setExamesLaudos(dadosProntuario.examesLaudos);
+      setObservacoes(dadosProntuario.observacoes);
+      }
     }
-  }, [idParam, baseURL]);
 
-  const carregarMedicamentos = useCallback(() => {
-    axios.get(`${BASE_URL2}/medicamentos`).then((response) => {
-      setListaMedicamentos(response.data);
-    });
-  }, []);
-
-  const salvar = async () => {
-    const data = {
+  async function salvar() {
+    let data = {
       id,
       nomeCompleto,
       crm,
@@ -76,28 +68,58 @@ function CadastroProntuario() {
       examesLaudos,
       observacoes,
     };
-    try {
-      if (idParam == null) {
-        await axios.post(baseURL, data, {
+    data = JSON.stringify(data);
+    if (idParam == null) {
+      await axios
+        .post(baseURL, data, {
           headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Prontuario de ${nomeCompleto} cadastrado com sucesso!`);
+          navigate(`/listagem-prontuarios`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
         });
-        mensagemSucesso(`Prontuário de ${nomeCompleto} cadastrado com sucesso!`);
-      } else {
-        await axios.put(`${baseURL}/${idParam}`, data, {
+    } else {
+      await axios
+        .put(`${baseURL}/${idParam}`, data, {
           headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Prontuario de ${nomeCompleto} cadastrado com sucesso!`);
+          navigate(`/listagem-prontuarios`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
         });
-        mensagemSucesso(`Prontuário de ${nomeCompleto} atualizado com sucesso!`);
-      }
-      navigate(`/listagem-prontuarios`);
-    } catch (error) {
-      mensagemErro(error.response?.data || 'Erro ao salvar prontuário.');
     }
   };
 
+  async function buscar() {
+    if (idParam != null){
+      await axios.get(`${baseURL}/${idParam}`).then((response) => {
+        setDados(response.data);
+
+        setId(dadosProntuario.id);
+        setNomeCompleto(dadosProntuario.nomeCompleto);
+        setCrm(dadosProntuario.crm);
+        setDataConsulta(dadosProntuario.dataConsulta);
+        setMotivoConsulta(dadosProntuario.motivoConsulta);
+        setSintomas(dadosProntuario.sintomas);
+        setDiagnostico(dadosProntuario.diagnostico);
+        setMedicamentos(dadosProntuario.medicamentos);
+        setExamesLaudos(dadosProntuario.examesLaudos);
+        setObservacoes(dadosProntuario.observacoes);
+      });
+    }
+  }
+
   useEffect(() => {
-    inicializar();
-    carregarMedicamentos();
-  }, [inicializar, carregarMedicamentos]);
+    buscar(); // eslint-disable-next-line
+  }, [id]);
+
+  if (!dadosProntuario) return null;
 
   return (
     <div className='container'>
