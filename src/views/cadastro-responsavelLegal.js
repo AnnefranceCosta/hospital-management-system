@@ -1,44 +1,50 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import Card from '../components/card';
 import SubCard from '../components/sub-card';
 import { mensagemSucesso, mensagemErro } from '../components/toastr';
-import { useNavigate, useParams } from 'react-router-dom';
+
 import axios from 'axios';
 import { BASE_URL2 } from '../config/axios';
 
-
-
-const baseURL = `${BASE_URL2}/responsaveisLegais`;
-
 function CadastroResponsavelLegal() {
-  const navigate = useNavigate();
   const { idParam } = useParams();
+  const navigate = useNavigate();
+  const baseURL = `${BASE_URL2}/responsaveisLegais`;
 
   const [id, setId] = useState('');
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState('');
   const [relacaoPaciente, setRelacaoPaciente] = useState('');
-  const [telefoneCelular, setTelefoneCelular] = useState('');
-  const [telefoneFixo, setTelefoneFixo] = useState('');
+  const [telefoneCelular, setTelefoneCelular] = useState('0');
+  const [telefoneFixo, setTelefoneFixo] = useState('0');
   const [email, setEmail] = useState('');
 
-  useEffect(() => {
-    if (idParam) {
-      axios.get(`${baseURL}/${idParam}`).then((response) => {
-        const { id, nome, cpf, relacaoPaciente, telefoneCelular, telefoneFixo, email } = response.data;
-        setId(id);
-        setNome(nome);
-        setCpf(cpf);
-        setRelacaoPaciente(relacaoPaciente);
-        setTelefoneCelular(telefoneCelular);
-        setTelefoneFixo(telefoneFixo);
-        setEmail(email);
-      });
-    }
-  }, [idParam]);
+  const [dadosResponsavelLegal, setDados] = React.useState([]);
 
-  const salvar = async () => {
-    const responsavelLegal = {
+  function inicializar() {
+    if (idParam == null) {
+      setId('');
+      setNome('');
+      setCpf('');
+      setRelacaoPaciente('');
+      setTelefoneCelular('0');
+      setTelefoneFixo('0');
+      setEmail('');
+    }else{
+      setId(dadosResponsavelLegal.id);
+      setNome(dadosResponsavelLegal.nome);
+      setCpf(dadosResponsavelLegal.cpf);
+      setRelacaoPaciente(dadosResponsavelLegal.relacaoPaciente);
+      setTelefoneCelular(dadosResponsavelLegal.telefoneCelular);
+      setTelefoneFixo(dadosResponsavelLegal.telefoneFixo);
+      setEmail(dadosResponsavelLegal.email);
+    }
+  }
+
+  async function salvar() {
+    let data = {
       id,
       nome,
       cpf,
@@ -47,20 +53,55 @@ function CadastroResponsavelLegal() {
       telefoneFixo,
       email,
     };
-
-    try {
-      if (id) {
-        await axios.put(`${baseURL}/${id}`, responsavelLegal);
-        mensagemSucesso('Responsável legal atualizado com sucesso!');
-      } else {
-        await axios.post(baseURL, responsavelLegal);
-        mensagemSucesso('Responsável legal cadastrado com sucesso!');
-      }
-      navigate('/listagem-responsaveisLegais');
-    } catch (error) {
-      mensagemErro('Erro ao salvar os dados do responsável legal!');
+    data = JSON.stringify(data);
+    if (idParam == null) {
+      await axios
+        .post(baseURL, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Responsável legal ${nome} cadastrado com sucesso!`);
+          navigate(`/listagem-responsavelLegal`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
+    } else {
+      await axios
+        .put(`${baseURL}/${idParam}`, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`ResponsavelLegal ${nome} cadastrado com sucesso!`);
+          navigate(`/listagem-responsavelLegal`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
     }
   };
+
+  async function buscar() {
+    if (idParam != null){
+    await axios.get(`${baseURL}/${idParam}`).then((response) => {
+      setDados(response.data);
+
+      setId(dadosResponsavelLegal.id);
+      setNome(dadosResponsavelLegal.nome);
+      setCpf(dadosResponsavelLegal.cpf);
+      setRelacaoPaciente(dadosResponsavelLegal.relacaoPaciente);
+      setTelefoneCelular(dadosResponsavelLegal.telefoneCelular);
+      setTelefoneFixo(dadosResponsavelLegal.telefoneFixo);
+      setEmail(dadosResponsavelLegal.email);
+    });
+  }
+}
+
+useEffect(() => {
+  buscar(); // eslint-disable-next-line
+}, [id]);
+
+if (!dadosResponsavelLegal) return null;
 
   return (
     <div className='container'>
@@ -126,18 +167,10 @@ function CadastroResponsavelLegal() {
                   />
                 </div>
                 </SubCard>
-                <button
-                  type='button'
-                  className='btn btn-success'
-                  onClick={salvar}
-                >
+                <button onClick={salvar} type='button' className='btn btn-success'>
                   Salvar
                 </button>
-                <button
-                  type='button'
-                  className='btn btn-danger'
-                  onClick={() => navigate('/listagem-responsaveisLegais')}
-                >
+                <button onClick={inicializar} type='button' className='btn btn-danger'>
                   Cancelar
                 </button>
               </form>
