@@ -2,22 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
-
 import Card from '../components/card';
 import FormGroup from '../components/form-group';
-
 import { mensagemSucesso, mensagemErro } from '../components/toastr';
 
 import '../custom.css';
-
 import axios from 'axios';
 import { BASE_URL } from '../config/axios';
 
 function CadastroTiposFuncionarios() {
   const { idParam } = useParams();
-
   const navigate = useNavigate();
-
   const baseURL = `${BASE_URL}/tipos-funcionarios`;
 
   const [id, setId] = useState('');
@@ -27,7 +22,7 @@ function CadastroTiposFuncionarios() {
   const [cadastroPacientes, setCadastroPacientes] = useState(false);
   const [cadastroFuncionarios, setCadastroFuncionarios] = useState(false);
 
-  const [dados, setDados] = useState([]);
+  const [dadosTiposFuncionarios, setDados] = useState([]);
 
   function inicializar() {
     if (!idParam) {
@@ -38,42 +33,49 @@ function CadastroTiposFuncionarios() {
       setCadastroPacientes(false);
       setCadastroFuncionarios(false);
     } else {
-      setId(dados.id);
-      setTipo(dados.tipo);
-      setDescricao(dados.descricao);
-      setProntuario(dados.prontuario);
-      setCadastroPacientes(dados.cadastroPacientes);
-      setCadastroFuncionarios(dados.cadastroFuncionarios);
+      setId(dadosTiposFuncionarios.id);
+      setTipo(dadosTiposFuncionarios.tipo);
+      setDescricao(dadosTiposFuncionarios.descricao);
+      setProntuario(dadosTiposFuncionarios.prontuario);
+      setCadastroPacientes(dadosTiposFuncionarios.cadastroPacientes);
+      setCadastroFuncionarios(dadosTiposFuncionarios.cadastroFuncionarios);
     }
   }
 
   async function salvar() {
-    const data = JSON.stringify({
+    let data = {
       id,
       tipo,
       descricao,
       prontuario,
       cadastroPacientes,
       cadastroFuncionarios,
-    });
-    if (!idParam) {
+    };
+    data = JSON.stringify(data);
+    if (idParam == null) {
       await axios
-        .post(baseURL, data, { headers: { 'Content-Type': 'application/json' } })
-        .then(() => {
-          mensagemSucesso(`Tipo de funcionário ${tipo} cadastrado com sucesso!`);
-          navigate(`/listagem-tipos-funcionarios`);
+        .post(baseURL, data, {
+          headers: { 'Content-Type': 'application/json' },
         })
-        .catch((error) => mensagemErro(error.response.data));
+        .then(function (response) {
+          mensagemSucesso(`Tipo de funcionário ${tipo} cadastrado com sucesso!`);
+          navigate(`/listagem-tiposFUncionarios`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
     } else {
       await axios
         .put(`${baseURL}/${idParam}`, data, {
           headers: { 'Content-Type': 'application/json' },
         })
-        .then(() => {
-          mensagemSucesso(`Tipo de funcionário ${tipo} atualizado com sucesso!`);
-          navigate(`/listagem-tipos-funcionarios`);
+        .then(function (response) {
+          mensagemSucesso(`Tipo de funcionário ${tipo} cadastrado com sucesso!`);
+          navigate(`/listagem-tiposFuncionarios`);
         })
-        .catch((error) => mensagemErro(error.response.data));
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
     }
   }
 
