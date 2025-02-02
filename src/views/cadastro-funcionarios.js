@@ -86,7 +86,7 @@ function CadastroFuncionarios() {
       telefoneCelular,
       telefoneFixo,
       email,
-      endereco,
+      endereco
     };
 
     data = JSON.stringify(data);
@@ -119,8 +119,11 @@ function CadastroFuncionarios() {
 
   async function buscar() {
     if (idParam != null){
-      await axios.get(`${baseURL}/${idParam}`).then((response) => {
+      await axios.get(`${baseURL}/${idParam}`)
+      .then((response) => {
+        const funcionario = response.data;
         setDados(response.data);
+      });
 
         setId(dadosFuncionario.id);
         setNomeCompleto(dadosFuncionario.nomeCompleto);
@@ -133,9 +136,15 @@ function CadastroFuncionarios() {
         setTelefoneCelular(dadosFuncionario.telefoneCelular);
         setTelefoneFixo(dadosFuncionario.telefoneFixo);
         setEmail(dadosFuncionario.email);
-        setEndereco(dadosFuncionario.endereco);
-      });
-    }
+        setEndereco(dadosFuncionario.endereco || {
+          logradouro: '',
+          numero: '',
+          cep: '',
+          bairro: '',
+          uf: '',
+          complemento: '',
+        });
+      }
 }
 
   useEffect(() => {

@@ -30,15 +30,20 @@ function ListagemFuncionarios() {
   };
 
   async function excluir(id) {
-    try {
-      await axios.delete(`${baseURL}/${id}`, {
+    let data = JSON.stringify([id]);
+    let url = `${baseURL}/${id}`;
+    console.log(url);
+    await axios
+      .delete(url, data, {
         headers: { 'Content-Type': 'application/json' },
+      })
+      .then(function (response) {
+        mensagemSucesso(`Funcionario excluído com sucesso!`);
+        setDados(dados.filter((dado) => { return dado.id !== id;}))
+      })
+      .catch((error) => {
+        mensagemErro(`Erro ao excluir o funcionário.`);
       });
-      mensagemSucesso('Funcionário excluído com sucesso!');
-      setDados(dados.filter((dado) => dado.id !== id));
-    } catch (error) {
-      mensagemErro('Erro ao excluir funcionário.');
-    }
   }
 
   React.useEffect(() => {
@@ -62,7 +67,7 @@ function ListagemFuncionarios() {
             <div className='bs-component'>
               <button
                 type='button'
-                className='btn btn-success'
+                className='btn btn-warning'
                 onClick={cadastrar}
               >
                 Novo Funcionário
