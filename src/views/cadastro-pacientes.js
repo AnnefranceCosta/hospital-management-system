@@ -108,7 +108,7 @@ function CadastroPacientes() {
       convenios,
       numeroCarteirinha,
       responsavelLegal,
-      endereco,
+      endereco
     };
     data = JSON.stringify(data);
     if (idParam == null) {
@@ -140,9 +140,11 @@ function CadastroPacientes() {
 
   async function buscar() {
     if (idParam != null){
-    await axios.get(`${baseURL}/${idParam}`).then((response) => {
+    await axios.get(`${baseURL}/${idParam}`)
+    .then((response) => {
+      const paciente = response.data;
       setDados(response.data);
-
+    });
       setId(dadosPaciente.id);
       setNomeCompleto(dadosPaciente.nomeCompleto);
       setCpf(dadosPaciente.cpf);
@@ -159,8 +161,14 @@ function CadastroPacientes() {
       setConvenios(dadosPaciente.convenios);
       setNumeroCarteirinha(dadosPaciente.numeroCarteirinha);
       setResponsavelLegal(dadosPaciente.responsavelLegal);
-      setEndereco(dadosPaciente.endereco);
-    });
+      setEndereco(dadosPaciente.endereco || {
+        logradouro: '',
+          numero: '',
+          cep: '',
+          bairro: '',
+          uf: '',
+          complemento: '',
+      });
   }
 }
 

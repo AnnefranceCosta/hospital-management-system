@@ -30,21 +30,23 @@ function ListagemPacientes() {
   const [dados, setDados] = useState([]);
 
   async function excluir(id) {
+    let data = JSON.stringify([id]);
     let url = `${baseURL}/${id}`;
+    console.log(url);
     await axios
-      .delete(url, {
+      .delete(url, data, {
         headers: { 'Content-Type': 'application/json' },
       })
-      .then((response) => {
+      .then(function (response) {
         mensagemSucesso(`Paciente excluído com sucesso!`);
-        setDados(dados.filter((dado) => dado.id !== id));
+        setDados(dados.filter((dado) => { return dado.id !== id;}))
       })
       .catch((error) => {
         mensagemErro(`Erro ao excluir o paciente`);
       });
   }
 
-  useEffect(() => {
+  React.useEffect(() => {
     axios.get(baseURL).then((response) => {
       setDados(response.data);
     });
@@ -60,7 +62,7 @@ function ListagemPacientes() {
             <div className='bs-component'>
               <button
                 type='button'
-                className='btn btn-success'
+                className='btn btn-warning'
                 onClick={() => cadastrar()}
               >
                 Novo Paciente
@@ -68,11 +70,11 @@ function ListagemPacientes() {
               <table className='table table-hover'>
                 <thead>
                   <tr>
-                    <th scope='col'>Nome Completo</th>
-                    <th scope='col'>Gênero</th>
-                    <th scope='col'>Data de Nascimento</th>
-                    <th scope='col'>CPF</th>
-                    <th scope='col'>Ações</th>
+                    <th scope="col">Nome Completo</th>
+                    <th scope="col">Gênero</th>
+                    <th scope="col">Data de Nascimento</th>
+                    <th scope="col">CPF</th>
+                    <th scope="col">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -83,15 +85,15 @@ function ListagemPacientes() {
                       <td>{dado.dataNascimento}</td>
                       <td>{dado.cpf}</td>
                       <td>
-                        <Stack spacing={1} padding={0} direction='row'>
+                        <Stack spacing={1} padding={0} direction="row">
                           <IconButton
-                            aria-label='edit'
+                            aria-label="edit"
                             onClick={() => editar(dado.id)}
                           >
                             <EditIcon />
                           </IconButton>
                           <IconButton
-                            aria-label='delete'
+                            aria-label="delete"
                             onClick={() => excluir(dado.id)}
                           >
                             <DeleteIcon />
@@ -101,7 +103,7 @@ function ListagemPacientes() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table>{" "}
             </div>
           </div>
         </div>
