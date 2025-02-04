@@ -13,7 +13,7 @@ import { BASE_URL } from '../config/axios';
 function CadastroTiposFuncionarios() {
   const { idParam } = useParams();
   const navigate = useNavigate();
-  const baseURL = `${BASE_URL}/tipos-funcionarios`;
+  const baseURL = `${BASE_URL}/tiposFuncionarios`;
 
   const [id, setId] = useState('');
   const [tipo, setTipo] = useState('');
@@ -59,7 +59,7 @@ function CadastroTiposFuncionarios() {
         })
         .then(function (response) {
           mensagemSucesso(`Tipo de funcionário ${tipo} cadastrado com sucesso!`);
-          navigate(`/listagem-tiposFUncionarios`);
+          navigate(`/listagem-tiposFuncionarios`);
         })
         .catch(function (error) {
           mensagemErro(error.response.data);

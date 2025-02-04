@@ -87,6 +87,19 @@ function CadastroCategoriaMedicamentos() {
       });
     }
   }
+
+  useEffect(() => {
+    async function carregarCategorias() {
+      try {
+        const response = await axios.get(baseURL);
+        setCategorias(response.data);
+      } catch (error) {
+        mensagemErro('Erro ao carregar categorias');
+      }
+    }
+    carregarCategorias();
+  }, []);
+
   useEffect(() => {
     buscar(); // eslint-disable-next-line
   }, [id]);

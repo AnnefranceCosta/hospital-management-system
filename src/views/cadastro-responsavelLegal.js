@@ -85,7 +85,7 @@ function CadastroResponsavelLegal() {
     if (idParam != null){
     await axios.get(`${baseURL}/${idParam}`).then((response) => {
       setDados(response.data);
-
+    });
       setId(dadosResponsavelLegal.id);
       setNome(dadosResponsavelLegal.nome);
       setCpf(dadosResponsavelLegal.cpf);
@@ -93,7 +93,6 @@ function CadastroResponsavelLegal() {
       setTelefoneCelular(dadosResponsavelLegal.telefoneCelular);
       setTelefoneFixo(dadosResponsavelLegal.telefoneFixo);
       setEmail(dadosResponsavelLegal.email);
-    });
   }
 }
 

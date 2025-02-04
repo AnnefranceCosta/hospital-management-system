@@ -110,6 +110,24 @@ function CadastroMedicamento() {
   }
 
   useEffect(() => {
+    if (idParam) {
+      buscar();
+    }
+  
+    axios
+      .get(`${BASE_URL}/categoriaMedicamentos`)
+      .then((response) => setCategorias(response.data))
+      .catch(() => mensagemErro("Erro ao carregar categorias!"));
+  
+    axios
+      .get(`${BASE_URL}/lotes`)
+      .then((response) => setLotes(response.data))
+      .catch(() => mensagemErro("Erro ao carregar lotes!"));
+  
+  }, [idParam]);
+  
+
+  useEffect(() => {
     buscar(); // eslint-disable-next-line
   }, [id]);
 

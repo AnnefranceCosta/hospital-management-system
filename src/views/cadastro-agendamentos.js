@@ -7,7 +7,7 @@ import FormGroup from "../components/form-group";
 import { mensagemSucesso, mensagemErro } from "../components/toastr";
 
 import axios from "axios";
-import { BASE_URL} from "../config/axios"; 
+import { BASE_URL, BASE_URL2 } from "../config/axios";
 import '../custom.css';
 
 function CadastroAgendamentos() {
@@ -92,6 +92,16 @@ function CadastroAgendamentos() {
       });
     }
   }
+
+  useEffect(() => {
+    axios.get(`${BASE_URL2}/pacientes`).then((response) => {
+      setPacientes(response.data);
+    });
+  
+    axios.get(`${BASE_URL}/funcionarios`).then((response) => {
+      setMedicos(response.data);
+    });
+  }, []);
 
   useEffect(() => {
     buscar(); // eslint-disable-next-line

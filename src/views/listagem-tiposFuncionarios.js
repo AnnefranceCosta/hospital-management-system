@@ -16,32 +16,38 @@ const baseURL = `${BASE_URL}/tiposFuncionarios`;
 
 function ListagemTiposFuncionarios() {
   const navigate = useNavigate();
-  const [dados, setDados] = useState([]);
 
   const cadastrar = () => navigate(`/cadastro-tiposFuncionarios`);
 
-  const editar = (id) => navigate(`/cadastro-tipos-funcionarios/${id}`);
+  const editar = (id) => navigate(`/cadastro-tiposFuncionarios/${id}`);
 
-  const excluir = async (id) => {
-    try {
-      await axios.delete(`${baseURL}/${id}`);
-      mensagemSucesso('Tipo de funcionário excluído com sucesso!');
-      setDados((prevDados) => prevDados.filter((dado) => dado.id !== id));
-    } catch (error) {
-      mensagemErro('Erro ao excluir o tipo de funcionário.');
-    }
-  };
+  const [dados, setDados] = useState([]);
 
-  useEffect(() => {
-    const fetchDados = async () => {
-      try {
-        const response = await axios.get(baseURL);
-        setDados(response.data);
-      } catch (error) {
-        mensagemErro('Erro ao carregar os tipos de funcionários.');
-      }
-    };
-    fetchDados();
+  async function excluir(id) {
+    let data = JSON.stringify({ id });
+    let url = `${baseURL}/${id}`;
+    console.log(url);
+    await axios
+      .delete(url, data, {
+        headers: { 'Content-Type': 'application/json' },
+      })
+      .then(function (response) {
+        mensagemSucesso(`Tipo de funcionário excluído com sucesso!`);
+        setDados(
+          dados.filter((dado) => {
+            return dado.id !== id;
+          })
+        );
+      })
+      .catch(function (error) {
+        mensagemErro(`Erro ao excluir a categoria`);
+      });
+  }
+
+  React.useEffect(() => {
+    axios.get(baseURL).then((response) => {
+      setDados(response.data);
+    });
   }, []);
 
   return (
@@ -50,7 +56,7 @@ function ListagemTiposFuncionarios() {
         <div className="row">
           <div className="col-lg-12">
             <div className="bs-component">
-              <button type="button" className="btn btn-success" onClick={cadastrar}>
+              <button type="button" className="btn btn-success" onClick={() => cadastrar()}>
                 Novo Tipo de Funcionário
               </button>
               {dados.length > 0 ? (

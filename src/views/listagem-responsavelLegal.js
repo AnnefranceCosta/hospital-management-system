@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import Card from '../components/card';
 import { mensagemSucesso, mensagemErro } from '../components/toastr';
-import { useNavigate } from 'react-router-dom';
+
 import Stack from '@mui/material/Stack';
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+
 import axios from 'axios';
 import { BASE_URL2 } from '../config/axios';
 
@@ -13,31 +16,39 @@ const baseURL = `${BASE_URL2}/responsavelLegal`;
 
 function ListagemResponsavelLegal() {
   const navigate = useNavigate();
-  const [dados, setDados] = useState(null);
 
-  useEffect(() => {
+  const cadastrar = () => {navigate(`/cadastro-responsavelLegal`);};
+
+  const editar = (id) => {navigate(`/cadastro-responsavelLegal/${id}`);};
+
+  const [dados, setDados] = useState([]);
+
+  async function excluir(id) {
+    let data = JSON.stringify({ id });
+    let url = `${baseURL}/${id}`;
+    console.log(url);
+    await axios
+      .delete(url, data, {
+        headers: { 'Content-Type': 'application/json' },
+      })
+      .then(function (response) {
+        mensagemSucesso(`Responsável legal excluído com sucesso!`);
+        setDados(
+          dados.filter((dado) => {
+            return dado.id !== id;
+          })
+        );
+      })
+      .catch(function (error) {
+        mensagemErro(`Erro ao excluir o responsável legal `);
+      });
+  }
+
+  React.useEffect(() => {
     axios.get(baseURL).then((response) => {
       setDados(response.data);
     });
   }, []);
-
-  const cadastrar = () => {
-    navigate('/cadastro-responsavelLegal');
-  };
-
-  const editar = (id) => {
-    navigate(`/cadastro-responsavelLegal/${id}`);
-  };
-
-  const excluir = async (id) => {
-    try {
-      await axios.delete(`${baseURL}/${id}`);
-      mensagemSucesso('Responsável legal excluído com sucesso!');
-      setDados(dados.filter((dado) => dado.id !== id));
-    } catch (error) {
-      mensagemErro('Erro ao excluir o responsável legal!');
-    }
-  };
 
   if (!dados) return null;
 
@@ -49,9 +60,8 @@ function ListagemResponsavelLegal() {
             <div className='bs-component'>
               <button
                 type='button'
-                className='btn btn-success'
-                onClick={cadastrar}
-              >
+                className='btn btn-warning'
+                onClick={() => cadastrar()} >
                 Novo Responsável Legal
               </button>
               <table className='table table-hover'>
@@ -73,14 +83,12 @@ function ListagemResponsavelLegal() {
                         <Stack spacing={1} direction='row'>
                           <IconButton
                             aria-label='edit'
-                            onClick={() => editar(dado.id)}
-                          >
+                            onClick={() => editar(dado.id)} >
                             <EditIcon />
                           </IconButton>
                           <IconButton
                             aria-label='delete'
-                            onClick={() => excluir(dado.id)}
-                          >
+                            onClick={() => excluir(dado.id)} >
                             <DeleteIcon />
                           </IconButton>
                         </Stack>
@@ -88,7 +96,7 @@ function ListagemResponsavelLegal() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table>{' '}
             </div>
           </div>
         </div>
