@@ -24,14 +24,14 @@ function Navbar(props) {
 
         <div className="collapse navbar-collapse" id="navbarResponsive">
           <ul className="navbar-nav mr-auto">
-            <NavbarItem render={true} href="/listagem-funcionarios" label="Funcionários" />
             <NavbarItem render={true} href="/listagem-tiposFuncionarios" label="Tipos de Funcionários" />
+            <NavbarItem render={true} href="/listagem-funcionarios" label="Funcionários" />
             <NavbarItem render={true} href="/listagem-pacientes" label="Pacientes" />
             <NavbarItem render={true} href="/listagem-responsavelLegal" label="Responsável Legal" />
             <NavbarItem render={true} href="/listagem-prontuarios" label="Prontuários" />
+            <NavbarItem render={true} href="/listagem-categoriaMedicamentos" label="Categoria de Medicamentos" />
             <NavbarItem render={true} href="/listagem-medicamentos" label="Medicamentos" />
             <NavbarItem render={true} href="/listagem-lotes" label="Lotes" />
-            <NavbarItem render={true} href="/listagem-categoriaMedicamentos" label="Categoria de Medicamentos" />
             <NavbarItem render={true} href="/listagem-agendamentos" label="Agendamentos" />
           </ul>
           <ul className="navbar-nav ml-auto">
