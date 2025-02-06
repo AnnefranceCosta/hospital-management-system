@@ -72,7 +72,6 @@ function ListagemLotes() {
               <table className='table table-hover'>
                 <thead>
                   <tr>
-                    <th scope='col'>ID</th>
                     <th scope='col'>Quantidade em Estoque</th>
                     <th scope='col'>Fornecedor</th>
                     <th scope='col'>Data de Fabricação</th>
@@ -83,7 +82,6 @@ function ListagemLotes() {
                 <tbody>
                   {dados.map((dado) => (
                     <tr key={dado.id}>
-                      <td>{dado.id}</td>
                       <td>{dado.quantidadeEstoque}</td>
                       <td>{dado.fornecedor}</td>
                       <td>{new Date(dado.dataFabricacao).toLocaleDateString()}</td>

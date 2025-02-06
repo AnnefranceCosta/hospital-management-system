@@ -74,7 +74,6 @@ function ListagemMedicamentos() {
               <table className='table table-hover'>
                 <thead>
                   <tr>
-                    <th scope='col'>ID</th>
                     <th scope='col'>Nome do Medicamento</th>
                     <th scope='col'>Quantidade</th>
                     <th scope='col'>Dosagem</th>
@@ -88,7 +87,6 @@ function ListagemMedicamentos() {
                 <tbody>
                   {dados.map((dado) => (
                     <tr key={dado.id}>
-                      <td>{dado.id}</td>
                       <td>{dado.nomeMedicamento}</td>
                       <td>{dado.quantidade}</td>
                       <td>{dado.dosagem}</td>

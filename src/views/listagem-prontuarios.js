@@ -43,7 +43,6 @@ function ListagemProntuarios() {
           <table className='table table-hover'>
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Nome do Médico</th>
                 <th>CRM</th>
                 <th>Data da Consulta</th>
@@ -54,7 +53,6 @@ function ListagemProntuarios() {
             <tbody>
               {prontuarios.map((prontuario) => (
                 <tr key={prontuario.id}>
-                  <td>{prontuario.id}</td>
                   <td>{prontuario.nomeCompleto}</td>
                   <td>{prontuario.crm}</td>
                   <td>{new Date(prontuario.dataConsulta).toLocaleDateString()}</td>

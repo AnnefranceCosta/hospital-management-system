@@ -68,7 +68,6 @@ function ListagemAgendamentos() {
             <table className="table table-hover">
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Paciente</th>
                   <th>Médico</th>
                   <th>Data e Hora</th>
@@ -85,7 +84,6 @@ function ListagemAgendamentos() {
                 ) : (
                   agendamentos.map((agendamento) => (
                     <tr key={agendamento.id}>
-                      <td>{agendamento.id}</td>
                       <td>{agendamento.paciente.nomeCompleto}</td>
                       <td>{agendamento.medico.nomeCompleto}</td>
                       <td>{new Date(agendamento.dataHora).toLocaleString()}</td>
