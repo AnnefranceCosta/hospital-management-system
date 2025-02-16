@@ -1,0 +1,217 @@
+
+{
+  "pacientes": [
+    {
+      "id": 1,
+      "nomeCompleto": "Maria Clara Silva",
+      "cpf": "123.456.789-00",
+      "dataNascimento": "1990-05-20",
+      "genero": "Feminino",
+      "tipoSanguineo": "O+",
+      "alergias": "Pólen, Lactose",
+      "carteirinhaSUS": "987654321012345",
+      "telefoneCelular": "(11) 91234-5678",
+      "telefoneFixo": "(11) 3456-7890",
+      "email": "maria.clara@gmail.com",
+      "profissao": "Engenheira Civil",
+      "religiao": "Católica",
+      "convenios": {
+        "vinculado": true,
+        "numeroCarteirinha": "A123456789"
+      },
+      "responsavelLegal": false,
+      "endereco": {
+        "logradouro": "Rua das Flores",
+        "numero": 123,
+        "cep": "01000-000",
+        "bairro": "Centro",
+        "uf": "SP",
+        "complemento": "Apto 45"
+      }
+    },
+    {
+      "id": 2,
+      "nomeCompleto": "João Pedro Oliveira",
+      "cpf": "987.654.321-99",
+      "dataNascimento": "1985-10-15",
+      "genero": "Masculino",
+      "tipoSanguineo": "A-",
+      "alergias": "Nenhuma",
+      "carteirinhaSUS": "123456789012345",
+      "telefoneCelular": "(21) 98765-4321",
+      "telefoneFixo": "(21) 2233-4455",
+      "email": "joao.oliveira@example.com",
+      "profissao": "Professor",
+      "religiao": "Evangélico",
+      "convenios": {
+        "vinculado": false,
+        "numeroCarteirinha": null
+      },
+      "responsavelLegal": false,
+      "endereco": {
+        "logradouro": "Avenida das Palmeiras",
+        "numero": 456,
+        "cep": "22000-000",
+        "bairro": "Copacabana",
+        "uf": "RJ",
+        "complemento": "Bloco A"
+      }
+    },
+    {
+      "id": 3,
+      "nomeCompleto": "Ana Beatriz Santos",
+      "cpf": "321.654.987-77",
+      "dataNascimento": "2000-03-12",
+      "genero": "Feminino",
+      "tipoSanguineo": "B+",
+      "alergias": "Penicilina",
+      "carteirinhaSUS": "456789123012345",
+      "telefoneCelular": "(31) 99876-5432",
+      "telefoneFixo": "(31) 3322-1100",
+      "email": "ana.santos@example.com",
+      "profissao": "Designer",
+      "religiao": "Espírita",
+      "convenios": {
+        "vinculado": true,
+        "numeroCarteirinha": "B987654321"
+      },
+      "responsavelLegal": true,
+      "endereco": {
+        "logradouro": "Praça da Liberdade",
+        "numero": 789,
+        "cep": "30140-010",
+        "bairro": "Savassi",
+        "uf": "MG",
+        "complemento": "Sala 101"
+      }
+    }
+  ],
+  "responsavelLegal": [
+    {
+      "id": 1,
+      "nome": "João Carlos da Silva",
+      "cpf": "123.456.789-00",
+      "relacaoPaciente": "Pai",
+      "telefoneCelular": "(11) 91234-5678",
+      "telefoneFixo": "(11) 4002-8922",
+      "email": "joao.silva@example.com",
+      "nomePaciente": "Ana Beatriz da Silva"
+    },
+    {
+      "id": 2,
+      "nome": "Maria Fernanda Oliveira",
+      "cpf": "987.654.321-00",
+      "relacaoPaciente": "Tia",
+      "telefoneCelular": "(21) 98765-4321",
+      "telefoneFixo": "(21) 3402-2211",
+      "email": "maria.oliveira@example.com",
+      "nomePaciente": "Pedro Henrique Oliveira"
+    }
+  ],
+  "agendamentos": [
+    {
+      "id": 1,
+      "paciente": {
+        "id": 101,
+        "nomeCompleto": "João Silva"
+      },
+      "medico": {
+        "id": 201,
+        "nomeCompleto": "Dra. Ana Costa"
+      },
+      "data": "2025-01-15",
+      "hora": "09:30:00"
+    },
+    {
+      "id": 2,
+      "paciente": {
+        "id": 102,
+        "nomeCompleto": "Maria Oliveira"
+      },
+      "medico": {
+        "id": 202,
+        "nomeCompleto": "Dr. Pedro Santos"
+      },
+      "data": "2025-01-15",
+      "hora": "14:00:00"
+    },
+    {
+      "id": 3,
+      "paciente": {
+        "id": 103,
+        "nomeCompleto": "Carlos Mendes"
+      },
+      "medico": {
+        "id": 203,
+        "nomeCompleto": "Dra. Júlia Almeida"
+      },
+      "data": "2025-01-16",
+      "hora": "11:15:00"
+    },
+    {
+      "id": 4,
+      "paciente": {
+        "id": 104,
+        "nomeCompleto": "Fernanda Lima"
+      },
+      "medico": {
+        "id": 204,
+        "nomeCompleto": "Dr. Ricardo Martins"
+      },
+      "data": "2025-01-17",
+      "hora": "16:45:00"
+    }
+  ],
+  "prontuarios": [
+    {
+      "id": 1,
+      "nomeCompleto": "Carlos Silva",
+      "crm": "12345-SP",
+      "nomePaciente": "Ana Pereira",
+      "data": "2025-01-10",
+      "hora": "09:00:00",
+      "motivoConsulta": "Dor de cabeça persistente",
+      "sintomas": "Dor na região frontal da cabeça, sensibilidade à luz",
+      "diagnostico": "Enxaqueca crônica",
+      "medicamentos": ["Paracetamol 500mg", "Sumatriptano"],
+      "examesLaudos": "Tomografia computadorizada normal",
+      "observacoes": "Orientado a evitar estresse e consumir menos cafeína"
+    },
+    {
+      "id": 2,
+      "nomeCompleto": "Fernanda Oliveira",
+      "crm": "67890-RJ",
+      "nomePaciente": "Pedro Santos",
+      "data": "2025-01-11",
+      "hora": "11:30:00",
+      "motivoConsulta": "Consulta de rotina",
+      "sintomas": "Sem queixas",
+      "diagnostico": "Saúde geral boa",
+      "medicamentos": ["Vitamina D 2000UI"],
+      "examesLaudos": "Exames laboratoriais dentro dos padrões normais",
+      "observacoes": "Recomendada prática regular de exercícios"
+    }
+  ],
+  "setores": [
+    {
+      "id": 1,
+      "nomeSetor": "Clínico Geral",
+      "descricao": "Setor responsável pelo atendimento médico inicial e acompanhamento geral dos pacientes."
+    },
+    {
+      "id": 2,
+      "nomeSetor": "Recursos Humanos",
+      "descricao": "Área responsável pela gestão de funcionários, incluindo recrutamento, treinamentos e administração de benefícios."
+    },
+    {
+      "id": 3,
+      "nomeSetor": "Administrativo",
+      "descricao": "Setor encarregado da gestão financeira, logística e operacional do hospital ou clínica."
+    },
+    {
+      "id": 4,
+      "nomeSetor": "Serviços Gerais",
+      "descricao": "Área responsável pela limpeza, manutenção e suporte às operações gerais da instituição."
+    }
+  ]
+}

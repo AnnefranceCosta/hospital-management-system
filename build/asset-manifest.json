@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/sgh-app/static/css/main.1394e8f0.css",
+    "main.js": "/sgh-app/static/js/main.9e45e34e.js",
+    "index.html": "/sgh-app/index.html",
+    "main.1394e8f0.css.map": "/sgh-app/static/css/main.1394e8f0.css.map",
+    "main.9e45e34e.js.map": "/sgh-app/static/js/main.9e45e34e.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1394e8f0.css",
+    "static/js/main.9e45e34e.js"
+  ]
+}
